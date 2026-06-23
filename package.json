@@ -1,0 +1,14 @@
+{
+  "name": "pt-nutrition-generator",
+  "version": "1.0.0",
+  "description": "PT Nutrition Generator - Personalized nutrition guidance for clients",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

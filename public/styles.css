@@ -1,0 +1,752 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #16213e;
+  --primary-light: #0f3460;
+  --accent: #e94560;
+  --accent-hover: #d63851;
+  --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --text: #2d3436;
+  --text-light: #636e72;
+  --border: #dfe6e9;
+  --success: #00b894;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  padding: 30px 0;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+.step {
+  display: none;
+  margin-bottom: 30px;
+}
+
+.step.active {
+  display: block;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.step-header h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.search-box {
+  margin-bottom: 16px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+
+.client-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.client-item {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.client-item:hover {
+  border-color: var(--accent);
+  background: #fff5f7;
+}
+
+.client-item .name {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.client-item .email {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 0;
+}
+
+.questionnaire-summary {
+  background: #f0f4ff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.questionnaire-summary h4 {
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.questionnaire-summary .detail {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.questionnaire-summary .detail strong {
+  color: var(--primary-light);
+}
+
+h3 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group textarea {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+}
+
+/* Nutrition Plan Styles */
+#nutrition-plan {
+  line-height: 1.7;
+}
+
+.plan-header {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.plan-header h2 {
+  color: var(--primary);
+  font-size: 1.4rem;
+}
+
+.plan-header .client-name {
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.plan-section {
+  margin-bottom: 24px;
+}
+
+.plan-section h3 {
+  color: var(--primary);
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-box {
+  background: #f0f4ff;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-box .label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-box .value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 4px;
+}
+
+.macro-bar {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 24px;
+  margin: 12px 0;
+}
+
+.macro-bar .protein {
+  background: #0984e3;
+}
+
+.macro-bar .carbs {
+  background: #00b894;
+}
+
+.macro-bar .fats {
+  background: #fdcb6e;
+}
+
+.macro-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.macro-legend span {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.macro-legend .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.meal-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--accent);
+}
+
+.meal-card h4 {
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.meal-card .meal-macros {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.meal-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.meal-card li {
+  padding: 4px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #eee;
+}
+
+.meal-card li:last-child {
+  border-bottom: none;
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tips-list li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.tips-list li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: 700;
+}
+
+.daily-totals {
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.daily-totals h4 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.daily-totals .total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.9rem;
+}
+
+/* Meal options & recipes */
+.meal-option {
+  margin-top: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.meal-option h5 {
+  color: var(--primary-light);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.recipe-section {
+  font-size: 0.88rem;
+}
+
+.recipe-section ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 4px 0 10px;
+}
+
+.recipe-section ol {
+  padding-left: 20px;
+  margin: 4px 0;
+}
+
+.recipe-section li {
+  padding: 2px 0;
+  border-bottom: none;
+}
+
+.recipe-section strong {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+/* Personal note */
+.personal-note-box {
+  background: #f0f4ff;
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 16px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* Water recommendation */
+.water-recommendation {
+  background: #e8f4fd;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.water-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0984e3;
+  margin-bottom: 8px;
+}
+
+.water-recommendation p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Meal timing */
+.routine-note {
+  background: #f0f4ff;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.timing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timing-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  align-items: center;
+}
+
+.timing-meal {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.timing-time {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.timing-note {
+  color: var(--text-light);
+}
+
+/* Workout nutrition */
+.workout-nutrition {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.workout-block {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.workout-block.pre {
+  border-left: 4px solid #fdcb6e;
+}
+
+.workout-block.post {
+  border-left: 4px solid var(--success);
+}
+
+.workout-block h5 {
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.workout-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+.workout-block li {
+  padding: 3px 0;
+  font-size: 0.85rem;
+}
+
+.workout-note {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Food categories / recommended foods */
+.food-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.food-category {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.food-category h5 {
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.food-category ul {
+  list-style: none;
+  padding: 0;
+}
+
+.food-category li {
+  padding: 2px 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+/* Grocery list */
+.grocery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.grocery-category {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.grocery-category h5 {
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.grocery-category ul {
+  list-style: none;
+  padding: 0;
+}
+
+.grocery-category li {
+  padding: 3px 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+/* Foods to avoid */
+.avoid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avoid-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #fff5f5;
+  border-radius: 6px;
+  align-items: baseline;
+}
+
+.avoid-food {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  min-width: 140px;
+  font-size: 0.9rem;
+}
+
+.avoid-reason {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.restriction-note {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #fff9e6;
+  border-radius: 6px;
+}
+
+/* Progress note */
+.progress-note-box {
+  background: #e8fff2;
+  border-left: 4px solid var(--success);
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 12px;
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .timing-item {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .workout-nutrition {
+    grid-template-columns: 1fr;
+  }
+
+  .food-categories,
+  .grocery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .avoid-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .avoid-food {
+    min-width: auto;
+  }
+}
