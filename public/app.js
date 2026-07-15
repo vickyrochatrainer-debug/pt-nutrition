@@ -281,6 +281,8 @@ function prefillFromQuestionnaire() {
       document.getElementById('goal').value = 'fat-loss';
     } else if (goalVal.includes('gain') || goalVal.includes('muscle') || goalVal.includes('build') || goalVal.includes('bulk')) {
       document.getElementById('goal').value = 'muscle-gain';
+    } else if (goalVal.includes('recomp') || goalVal.includes('body comp') || goalVal.includes('composition') || goalVal.includes('tone') || goalVal.includes('toning')) {
+      document.getElementById('goal').value = 'body-recomposition';
     } else {
       document.getElementById('goal').value = 'maintenance';
     }
@@ -305,26 +307,31 @@ function computeNutrition() {
   const mealsPerDay = parseInt(document.getElementById('meals-per-day').value);
   const personalNote = document.getElementById('personal-note').value;
 
-  const weight = weightLbs * 0.453592;
-  const goalWeight = goalWeightLbs ? (parseFloat(goalWeightLbs) * 0.453592).toFixed(1) : '';
+  const weight = weightLbs / 2.205;
+  const goalWeight = goalWeightLbs ? (parseFloat(goalWeightLbs) / 2.205).toFixed(1) : '';
   const height = heightIn * 2.54;
 
+  // Mifflin-St Jeor BMR
   let bmr;
   if (gender === 'male') {
     bmr = 10 * weight + 6.25 * height - 5 * age + 5;
   } else {
     bmr = 10 * weight + 6.25 * height - 5 * age - 161;
   }
+  bmr = Math.round(bmr);
 
   const tdee = Math.round(bmr * activityLevel);
 
   let calorieTarget, goalLabel;
   if (goal === 'fat-loss') {
-    calorieTarget = Math.round(tdee - 500);
+    calorieTarget = tdee - 400;
     goalLabel = 'Fat Loss';
   } else if (goal === 'muscle-gain') {
-    calorieTarget = Math.round(tdee + 300);
+    calorieTarget = tdee + 250;
     goalLabel = 'Muscle Gain';
+  } else if (goal === 'body-recomposition') {
+    calorieTarget = tdee - 200;
+    goalLabel = 'Body Recomposition';
   } else {
     calorieTarget = tdee;
     goalLabel = 'Maintenance';
@@ -333,26 +340,40 @@ function computeNutrition() {
   const minCalories = gender === 'male' ? 1400 : 1200;
   if (calorieTarget < minCalories) calorieTarget = minCalories;
 
-  let proteinPerKg, fatPercent;
-  if (goal === 'fat-loss') { proteinPerKg = 2.2; fatPercent = 0.25; }
-  else if (goal === 'muscle-gain') { proteinPerKg = 2.0; fatPercent = 0.25; }
-  else { proteinPerKg = 1.8; fatPercent = 0.3; }
+  const d = (clientProfile && clientProfile.diet) ? clientProfile.diet : {};
 
-  let proteinBase = weight;
-  if (bodyFat && bodyFat > 0 && bodyFat < 100) {
-    proteinBase = weight * (1 - bodyFat / 100);
+  // Macro percentages — dietary style overrides goal-based split
+  let proteinPercent, carbsPercent, fatPercent;
+  if (d.isCarnivore) {
+    proteinPercent = 0.40; carbsPercent = 0.05; fatPercent = 0.55;
+  } else if (d.isKeto || d.isLowCarb) {
+    proteinPercent = 0.35; carbsPercent = 0.10; fatPercent = 0.55;
+  } else if (goal === 'fat-loss') {
+    proteinPercent = 0.35; carbsPercent = 0.35; fatPercent = 0.30;
+  } else if (goal === 'muscle-gain') {
+    proteinPercent = 0.30; carbsPercent = 0.45; fatPercent = 0.25;
+  } else {
+    // maintenance and body-recomposition
+    proteinPercent = 0.30; carbsPercent = 0.40; fatPercent = 0.30;
   }
 
-  const proteinGrams = Math.round(proteinBase * proteinPerKg);
-  const proteinCals  = proteinGrams * 4;
-  let fatCals   = Math.round(calorieTarget * fatPercent);
-  let fatGrams  = Math.round(fatCals / 9);
+  let proteinCals = Math.round(calorieTarget * proteinPercent);
+  let proteinGrams = Math.round(proteinCals / 4);
+
+  // Enforce minimum 1g protein per pound of bodyweight
+  const minProteinGrams = Math.round(weightLbs);
+  if (proteinGrams < minProteinGrams) {
+    proteinGrams = minProteinGrams;
+    proteinCals = proteinGrams * 4;
+  }
+
+  let fatCals = Math.round(calorieTarget * fatPercent);
+  let fatGrams = Math.round(fatCals / 9);
   let carbsCals = Math.max(0, calorieTarget - proteinCals - fatCals);
   let carbsGrams = Math.max(0, Math.round(carbsCals / 4));
 
-  // Dietary style macro overrides (clientProfile is set before computeNutrition in generatePlan)
+  // Hard carb caps and adjustments for special diets
   if (clientProfile) {
-    const d = clientProfile.diet;
     if (d.isCarnivore) {
       carbsGrams = 0; carbsCals = 0;
       fatGrams = Math.round((calorieTarget - proteinCals) / 9);
@@ -383,7 +404,7 @@ function computeNutrition() {
     weight, goalWeight, height, age, gender, activityLevel, goal, goalLabel,
     weightLbs, goalWeightLbs, heightIn, bodyFat,
     mealsPerDay, personalNote,
-    bmr: Math.round(bmr), tdee, calorieTarget,
+    bmr, tdee, calorieTarget,
     proteinGrams, proteinCals, carbsGrams, carbsCals, fatGrams, fatCals,
     waterLiters,
     clientName: getClientName(selectedClient),
@@ -2360,6 +2381,8 @@ function getProgressNote(goal, weight) {
     return `Following this plan consistently, you can expect to lose approximately 1-1.5 lbs per week. In 4 weeks, that's 4-6 lbs of fat loss while preserving muscle mass. Results depend on consistency, training intensity, sleep, and stress management. We will reassess and adjust your plan every 2-4 weeks based on your progress.`;
   } else if (goal === 'muscle-gain') {
     return `With consistent training and nutrition, you can expect to gain approximately 0.5-1 lb of lean muscle per week. In 8 weeks, that's 4-8 lbs of quality muscle gain. Track your lifts and body measurements to monitor progress. We will reassess your calorie needs every 3-4 weeks as your weight increases.`;
+  } else if (goal === 'body-recomposition') {
+    return `Body recomposition is the process of simultaneously losing fat and building muscle. With a small 200-calorie deficit and high protein intake, expect subtle but meaningful changes over 8-12 weeks — less body fat and more muscle definition. The scale may barely move, but your body composition will shift. Track measurements and progress photos monthly rather than relying on the scale. Reassess macros every 4 weeks.`;
   }
   return `Following this maintenance plan, your weight should remain stable within 1-2 lbs. Focus on body composition changes rather than the scale. If you notice unintended weight gain or loss, we will adjust your portions and macros accordingly. Check-ins every 2-4 weeks recommended.`;
 }
@@ -2700,7 +2723,9 @@ function buildPlanHTML(data) {
     <div class="plan-section">
       <h3>Daily Totals</h3>
       <div class="daily-totals">
-        <div class="total-row"><span>Calories</span><span>${data.calorieTarget} kcal</span></div>
+        <div class="total-row total-row-sub"><span>BMR (Basal Metabolic Rate)</span><span>${data.bmr} kcal</span></div>
+        <div class="total-row total-row-sub"><span>TDEE (Total Daily Energy Expenditure)</span><span>${data.tdee} kcal</span></div>
+        <div class="total-row total-row-highlight"><span>Calorie Target — ${data.goalLabel}</span><span>${data.calorieTarget} kcal</span></div>
         <div class="total-row"><span>Protein</span><span>${data.proteinGrams}g / ${data.proteinCals} kcal</span></div>
         <div class="total-row"><span>Carbohydrates</span><span>${data.carbsGrams}g / ${data.carbsCals} kcal</span></div>
         <div class="total-row"><span>Fats</span><span>${data.fatGrams}g / ${data.fatCals} kcal</span></div>
@@ -2843,18 +2868,19 @@ function exportPDF() {
   }
 
   // --- Daily Totals ---
-  checkPage(30);
+  checkPage(46);
   doc.setFillColor(22, 33, 62);
-  doc.roundedRect(margin, y, contentWidth, 30, 3, 3, 'F');
+  doc.roundedRect(margin, y, contentWidth, 46, 3, 3, 'F');
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(255, 255, 255);
   doc.text('Daily Totals', margin + 6, y + 7);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.text(`Calories: ${data.calorieTarget} kcal`, margin + 6, y + 14);
-  doc.text(`Protein: ${data.proteinGrams}g / ${data.proteinCals} kcal  |  Carbs: ${data.carbsGrams}g / ${data.carbsCals} kcal  |  Fats: ${data.fatGrams}g / ${data.fatCals} kcal`, margin + 6, y + 21);
-  y += 40;
+  doc.text(`BMR: ${data.bmr} kcal  |  TDEE: ${data.tdee} kcal`, margin + 6, y + 14);
+  doc.text(`Calorie Target (${data.goalLabel}): ${data.calorieTarget} kcal`, margin + 6, y + 21);
+  doc.text(`Protein: ${data.proteinGrams}g / ${data.proteinCals} kcal  |  Carbs: ${data.carbsGrams}g / ${data.carbsCals} kcal  |  Fats: ${data.fatGrams}g / ${data.fatCals} kcal`, margin + 6, y + 28);
+  y += 56;
 
   // --- Water ---
   sectionTitle('Daily Water Intake');

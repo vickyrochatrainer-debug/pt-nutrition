@@ -437,6 +437,21 @@ h3 {
   font-size: 0.9rem;
 }
 
+.daily-totals .total-row-sub {
+  opacity: 0.75;
+  font-size: 0.82rem;
+}
+
+.daily-totals .total-row-highlight {
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 6px 0;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  margin: 4px 0;
+  color: #ffeaa7;
+}
+
 /* Meal options & recipes */
 .meal-option {
   margin-top: 12px;
