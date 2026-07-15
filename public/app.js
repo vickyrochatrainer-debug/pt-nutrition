@@ -258,19 +258,53 @@ function prefillFromQuestionnaire() {
   const mealsPerDay = getClientMealsPerDay(selectedClient);
   document.getElementById('meals-per-day').value = mealsPerDay;
 
-  // Q16: parse training frequency → suggest activity level
+  // Determine activity level from Q4 (lifestyle/occupation) and Q16 (training frequency) — Q16 takes priority
+  const q4Field = getClientField(selectedClient, 'q4', 'lifestyle', 'occupation', 'how active', 'daily activity', 'activity level');
   const trainingField = getClientField(selectedClient, 'q16', 'type of training', 'training type', 'frequency');
+
+  let activityFromQ16 = null;
   if (trainingField) {
+    const t16 = trainingField.toLowerCase();
     const freqMatch = trainingField.match(/(\d+)\s*(?:x|times?|days?(?:\/| per )?week)/i);
     if (freqMatch) {
       const freq = parseInt(freqMatch[1]);
-      const actSelect = document.getElementById('activity-level');
-      if (freq <= 1)      actSelect.value = '1.2';
-      else if (freq <= 3) actSelect.value = '1.375';
-      else if (freq <= 5) actSelect.value = '1.55';
-      else if (freq <= 6) actSelect.value = '1.725';
-      else                actSelect.value = '1.9';
+      if (freq <= 1)      activityFromQ16 = '1.2';
+      else if (freq <= 2) activityFromQ16 = '1.375';
+      else if (freq <= 5) activityFromQ16 = '1.55';
+      else if (freq <= 6) activityFromQ16 = '1.725';
+      else                activityFromQ16 = '1.9';
+    } else if (t16.includes('sedentary') || t16.includes('no exercise') || t16.includes('not active')) {
+      activityFromQ16 = '1.2';
+    } else if (t16.includes('lightly') || t16.includes('1-2') || t16.includes('once') || t16.includes('twice a week')) {
+      activityFromQ16 = '1.375';
+    } else if (t16.includes('moderately') || t16.includes('3-5') || t16.includes('3 to 5')) {
+      activityFromQ16 = '1.55';
+    } else if (t16.includes('very active') || t16.includes('6-7') || t16.includes('daily')) {
+      activityFromQ16 = '1.725';
+    } else if (t16.includes('extremely') || t16.includes('athlete') || t16.includes('twice daily') || t16.includes('physical job')) {
+      activityFromQ16 = '1.9';
     }
+  }
+
+  let activityFromQ4 = null;
+  if (q4Field) {
+    const t4 = q4Field.toLowerCase();
+    if (t4.includes('sedentary') || t4.includes('desk') || t4.includes('office') || t4.includes('not active') || t4.includes('not very')) {
+      activityFromQ4 = '1.2';
+    } else if (t4.includes('lightly') || t4.includes('light') || t4.includes('walk') || t4.includes('teacher') || t4.includes('nurse') || t4.includes('standing')) {
+      activityFromQ4 = '1.375';
+    } else if (t4.includes('moderate')) {
+      activityFromQ4 = '1.55';
+    } else if (t4.includes('very active') || t4.includes('physical') || t4.includes('construction') || t4.includes('labor') || t4.includes('labour')) {
+      activityFromQ4 = '1.725';
+    } else if (t4.includes('extremely') || t4.includes('athlete') || t4.includes('twice daily')) {
+      activityFromQ4 = '1.9';
+    }
+  }
+
+  const activityValue = activityFromQ16 || activityFromQ4;
+  if (activityValue) {
+    document.getElementById('activity-level').value = activityValue;
   }
 
   const keys = Object.keys(selectedClient);
@@ -302,7 +336,8 @@ function computeNutrition() {
   const bodyFat = parseFloat(document.getElementById('body-fat').value) || null;
   const age = parseInt(document.getElementById('age').value);
   const gender = document.getElementById('gender').value;
-  const activityLevel = parseFloat(document.getElementById('activity-level').value);
+  const activityRaw = parseFloat(document.getElementById('activity-level').value);
+  const activityLevel = (!isNaN(activityRaw) && activityRaw >= 1.2) ? activityRaw : 1.2;
   const goal = document.getElementById('goal').value;
   const mealsPerDay = parseInt(document.getElementById('meals-per-day').value);
   const personalNote = document.getElementById('personal-note').value;
@@ -337,7 +372,7 @@ function computeNutrition() {
     goalLabel = 'Maintenance';
   }
 
-  const minCalories = gender === 'male' ? 1400 : 1200;
+  const minCalories = gender === 'male' ? 1600 : 1400;
   if (calorieTarget < minCalories) calorieTarget = minCalories;
 
   const d = (clientProfile && clientProfile.diet) ? clientProfile.diet : {};
