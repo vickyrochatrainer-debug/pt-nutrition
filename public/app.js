@@ -1974,21 +1974,22 @@ function getCarnivoreSnackOptions(p, c, f) {
 function getBreakfastSwapOptions(p, c, f) {
   return [
     {
-      title: 'Turkey Bacon & Spinach Egg Muffins',
+      title: 'Smoked Salmon Cream Cheese Whole Wheat Bagel',
       ingredients: [
-        `${Math.max(3, Math.round(p * 0.7 / 6))} whole eggs`,
-        `${Math.round(p * 0.25 / 0.35)}g turkey bacon`,
-        '1 cup baby spinach, roughly chopped',
-        '1/4 cup diced red bell pepper',
-        `${Math.round(p * 0.1 / 0.07)}g shredded mozzarella`,
-        'Salt, pepper, garlic powder',
+        `${Math.round(p * 0.65 / 0.20)}g smoked salmon`,
+        `${Math.max(1, Math.round(c * 0.55 / 0.43 / 28))} whole wheat bagel`,
+        `${Math.round(p * 0.25 / 0.11)}g light cream cheese`,
+        '1/4 small red onion, thinly sliced',
+        '1 tbsp capers',
+        '6–8 cucumber slices',
+        'Fresh dill, lemon juice, black pepper',
       ],
       instructions: [
-        'Preheat oven to 375°F / 190°C. Grease a 6-cup muffin tin.',
-        'Cook turkey bacon until slightly crispy. Chop into small pieces.',
-        'Whisk eggs with salt, pepper, and garlic powder.',
-        'Divide spinach, bell pepper, and turkey bacon among muffin cups.',
-        'Pour egg mixture over. Top with mozzarella. Bake 18–20 minutes until set.',
+        'Slice and toast the bagel until golden and crisp.',
+        'Spread cream cheese generously on each half.',
+        'Layer smoked salmon over the cream cheese.',
+        'Top with cucumber slices, red onion, and capers.',
+        'Finish with fresh dill, a squeeze of lemon juice, and black pepper.',
       ],
     },
     {
@@ -2009,21 +2010,21 @@ function getBreakfastSwapOptions(p, c, f) {
       ],
     },
     {
-      title: 'Smoked Salmon Scrambled Eggs',
+      title: 'Cottage Cheese Bowl with Banana & Almond Butter',
       ingredients: [
-        `${Math.max(3, Math.round(p * 0.55 / 6))} whole eggs`,
-        `${Math.round(p * 0.35 / 0.20)}g smoked salmon, roughly torn`,
-        `${Math.round(f * 0.35 / 0.92)} tsp butter`,
-        '2 tbsp cream cheese (light)',
-        '1 tbsp fresh chives or dill, chopped',
-        'Black pepper, lemon zest',
+        `${Math.round(p * 0.75 / 0.11)}g low-fat cottage cheese`,
+        `${Math.round(c * 0.45 / 0.14)}g banana, sliced`,
+        `${Math.round(f * 0.5 / 0.50)}g almond butter`,
+        `${Math.round(c * 0.2 / 0.60)}g rolled oats (raw, used as topping)`,
+        '1 tsp honey',
+        'Pinch of cinnamon',
       ],
       instructions: [
-        'Whisk eggs with a pinch of pepper.',
-        'Melt butter over low heat. Pour in eggs and stir slowly with a spatula.',
-        'When eggs are almost set, stir in cream cheese until just melted.',
-        'Remove from heat. Fold in smoked salmon and chives.',
-        'Serve immediately with a squeeze of lemon zest.',
+        'Spoon cottage cheese into a bowl.',
+        'Slice banana and arrange on top.',
+        'Dollop almond butter over the banana.',
+        'Sprinkle raw rolled oats and a pinch of cinnamon.',
+        'Drizzle honey over everything. Eat immediately.',
       ],
     },
   ];
@@ -2068,23 +2069,22 @@ function getLunchSwapOptions(p, c, f) {
       ],
     },
     {
-      title: 'Egg Salad Stuffed Bell Peppers',
+      title: 'BBQ Pulled Chicken & Sweet Potato Bowl',
       ingredients: [
-        `${Math.max(3, Math.round(p * 0.8 / 6))} hard boiled eggs`,
-        '2 large bell peppers, halved and seeded',
-        '1 tbsp avocado oil mayonnaise',
-        '1 tsp Dijon mustard',
-        '2 tbsp celery, finely diced',
-        '1 tbsp chives, chopped',
-        `${Math.round(c * 0.5 / 0.5)}g cooked quinoa (stirred into salad)`,
-        'Salt, pepper, paprika',
+        `${Math.round(p * 0.85 / 0.31)}g chicken breast`,
+        `${Math.round(c * 0.4 / 0.20)}g sweet potato, cubed`,
+        `${Math.round(p * 0.1 / 0.089)}g canned black beans, rinsed`,
+        '3 tbsp BBQ sauce (low sugar)',
+        '1/2 cup red cabbage, shredded',
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '1 tbsp lime juice, fresh cilantro, salt',
       ],
       instructions: [
-        'Hard boil eggs: boil 10 minutes, cool in ice water, peel.',
-        'Chop eggs and mix with mayo, mustard, celery, chives, and quinoa.',
-        'Season well with salt, pepper, and paprika.',
-        'Spoon filling generously into bell pepper halves.',
-        'Serve immediately or refrigerate and eat cold.',
+        'Season chicken with salt. Poach or bake at 400°F / 200°C for 20 minutes until cooked through.',
+        'Shred chicken with two forks. Toss with BBQ sauce.',
+        'Toss sweet potato cubes with a little oil and salt. Roast at 425°F / 220°C for 22 minutes.',
+        'Warm black beans in a small pan. Season with salt.',
+        'Build the bowl: sweet potato and beans on the base, pulled chicken and red cabbage on top, avocado on the side. Squeeze lime juice and scatter cilantro.',
       ],
     },
   ];
@@ -2155,20 +2155,21 @@ function getDinnerSwapOptions(p, c, f) {
 function getSnackSwapOptions(p, c, f) {
   return [
     {
-      title: 'Tuna on Whole Grain Rice Cakes',
+      title: 'Edamame & Hummus Protein Plate',
       ingredients: [
-        `${Math.round(p * 0.75 / 0.26)}g canned tuna in water, drained`,
-        `${Math.max(2, Math.round(c * 0.5 / 8))} plain brown rice cakes`,
-        '1 tbsp avocado oil mayo',
-        '1 tsp Dijon mustard',
-        '1/4 cup cucumber, thinly sliced',
-        'Salt, pepper, lemon juice',
+        `${Math.round(p * 0.65 / 0.11)}g shelled edamame (frozen, thawed)`,
+        `${Math.round(f * 0.45 / 0.30)}g hummus`,
+        `${Math.max(6, Math.round(c * 0.5 / 0.10))} whole grain crackers`,
+        '1/2 cup cherry tomatoes',
+        '1/4 cup sliced cucumber',
+        'Salt, smoked paprika',
       ],
       instructions: [
-        'Mix tuna with mayo, mustard, lemon juice, salt, and pepper.',
-        'Layer cucumber slices on each rice cake.',
-        'Spoon tuna mixture on top.',
-        'Eat immediately — best when tuna is fresh.',
+        'Thaw edamame under warm water or microwave 2 minutes. Pat dry and season with salt.',
+        'Arrange crackers on one side of a plate.',
+        'Spoon hummus into a small bowl. Sprinkle smoked paprika over top.',
+        'Add cherry tomatoes and cucumber slices.',
+        'Serve edamame alongside for a high-protein grab-and-dip plate.',
       ],
     },
     {
@@ -4353,17 +4354,23 @@ function swapMealOption(mealIdx, slot) {
     clientProfile
   );
 
-  const seen = swapHistory[historyKey];
-  let unseen = pool.filter(o => !seen.has(o.title));
+  // Exclude what is currently displayed in the other two slots so swaps are always fresh
+  const shownElsewhere = new Set(
+    ['A', 'B', 'C'].filter(s => s !== slot).map(s => meal[`option${s}`].title)
+  );
 
-  if (unseen.length === 0) {
+  const seen = swapHistory[historyKey];
+  let candidates = pool.filter(o => !seen.has(o.title) && !shownElsewhere.has(o.title));
+
+  if (candidates.length === 0) {
+    // All unique options exhausted — reset history (keep only current) and try again
     swapHistory[historyKey] = new Set([meal[`option${slot}`].title]);
-    unseen = pool.filter(o => o.title !== meal[`option${slot}`].title);
+    candidates = pool.filter(o => o.title !== meal[`option${slot}`].title && !shownElsewhere.has(o.title));
   }
 
-  if (unseen.length === 0) return;
+  if (candidates.length === 0) return;
 
-  const next = unseen[0];
+  const next = candidates[0];
   swapHistory[historyKey].add(next.title);
   currentPlanData.mealPlan[mealIdx][`option${slot}`] = next;
 
