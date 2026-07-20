@@ -7,7 +7,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res, filePath) => {
+    if (/\.(js|css)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-store');
+    }
+  },
+}));
 
 const SPREADSHEET_ID = '1byoibj1SLQayKYf8mNB7f9zgn8k6Ti0BOhdy-d-mFQ8';
 const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');

@@ -2,6 +2,7 @@ let allClients = [];
 let selectedClient = null;
 let clientHeaders = [];
 let clientProfile = null;
+let currentPlanData = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   registerServiceWorker();
@@ -18,7 +19,7 @@ function registerServiceWorker() {
 function setupEventListeners() {
   document.getElementById('client-search').addEventListener('input', filterClients);
   document.getElementById('btn-generate').addEventListener('click', generatePlan);
-  document.getElementById('btn-export').addEventListener('click', exportPDF);
+  document.getElementById('btn-export').addEventListener('click', approveAndExport);
   document.getElementById('btn-back').addEventListener('click', () => showStep('step-data'));
 }
 
@@ -377,16 +378,6 @@ function computeNutrition() {
     goalLabel = 'Maintenance';
   }
 
-  let minCalories;
-  if (goal === 'muscle-gain') {
-    minCalories = gender === 'male' ? 2000 : 1800;
-  } else if (goal === 'body-recomposition') {
-    minCalories = gender === 'male' ? 1700 : 1500;
-  } else {
-    minCalories = gender === 'male' ? 1600 : 1400;
-  }
-  if (calorieTarget < minCalories) calorieTarget = minCalories;
-
   const d = (clientProfile && clientProfile.diet) ? clientProfile.diet : {};
 
   // Macro percentages — dietary style overrides goal-based split
@@ -631,24 +622,11 @@ function generatePlan() {
   clientProfile = getClientProfile(selectedClient);
   const data = computeNutrition();
   const mealPlan = generateMealPlan(data.mealsPerDay, data.proteinGrams, data.carbsGrams, data.fatGrams, data.calorieTarget, data.goal, clientProfile);
-  const tips = generateTips(data.goal, selectedClient);
-  const foodList = getFoodList(data);
-  const groceryList = getWeeklyGroceryList(data);
-  const mealTiming = getMealTiming(data.mealsPerDay, selectedClient);
-  const workoutNutrition = getWorkoutNutrition(data.goal, selectedClient);
-  const foodsToAvoid = getFoodsToAvoid(data.goal, selectedClient);
-  const progressNote = getProgressNote(data.goal, data.weight);
-  const medicalAdjustments = getMedicalAdjustments(clientProfile);
-  const pastExperienceNote = getPastExperienceNote(clientProfile);
 
-  const planHTML = buildPlanHTML({
-    ...data, mealPlan, tips, foodList, groceryList,
-    mealTiming, workoutNutrition, foodsToAvoid, progressNote,
-    medicalAdjustments, pastExperienceNote,
-  });
-
-  document.getElementById('nutrition-plan').innerHTML = planHTML;
+  currentPlanData = { ...data, mealPlan };
   saveClientPlan(data);
+
+  document.getElementById('nutrition-plan').innerHTML = buildPreviewHTML(currentPlanData);
   showStep('step-plan');
 }
 
@@ -2972,6 +2950,109 @@ function buildPlanHTML(data) {
   `;
 }
 
+// --- Preview ---
+
+function buildPreviewHTML(data) {
+  const mealsHTML = data.mealPlan.map(meal => `
+    <div class="meal-card">
+      <h4>${meal.name}</h4>
+      <div class="meal-macros">
+        ${meal.calories} cal | P: ${meal.protein}g | C: ${meal.carbs}g | F: ${meal.fats}g
+      </div>
+      <div class="meal-option">
+        <h5>Option A: ${meal.optionA.title}</h5>
+        <div class="recipe-section">
+          <strong>Ingredients:</strong>
+          <ul>${meal.optionA.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <strong>Instructions:</strong>
+          <ol>${meal.optionA.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+      <div class="meal-option">
+        <h5>Option B: ${meal.optionB.title}</h5>
+        <div class="recipe-section">
+          <strong>Ingredients:</strong>
+          <ul>${meal.optionB.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <strong>Instructions:</strong>
+          <ol>${meal.optionB.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+      <div class="meal-option">
+        <h5>Option C: ${meal.optionC.title}</h5>
+        <div class="recipe-section">
+          <strong>Ingredients:</strong>
+          <ul>${meal.optionC.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <strong>Instructions:</strong>
+          <ol>${meal.optionC.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="preview-adjust">
+      <h3>Review &amp; Adjust</h3>
+      <p class="preview-meta">BMR: ${data.bmr} kcal &nbsp;&middot;&nbsp; TDEE: ${data.tdee} kcal &nbsp;&middot;&nbsp; Goal: ${data.goalLabel}</p>
+      <div class="preview-macro-grid">
+        <div class="form-group">
+          <label>Daily Calorie Target (kcal)</label>
+          <input type="number" id="preview-calories" value="${data.calorieTarget}">
+        </div>
+        <div class="form-group">
+          <label>Protein (g)</label>
+          <input type="number" id="preview-protein" value="${data.proteinGrams}">
+        </div>
+        <div class="form-group">
+          <label>Carbohydrates (g)</label>
+          <input type="number" id="preview-carbs" value="${data.carbsGrams}">
+        </div>
+        <div class="form-group">
+          <label>Fat (g)</label>
+          <input type="number" id="preview-fat" value="${data.fatGrams}">
+        </div>
+      </div>
+    </div>
+
+    <div class="plan-section">
+      <h3>Meal Plan (${data.mealsPerDay} meals/day)</h3>
+      ${mealsHTML}
+    </div>
+  `;
+}
+
+function approveAndExport() {
+  if (!currentPlanData) return;
+
+  const editedCalories = parseInt(document.getElementById('preview-calories').value) || currentPlanData.calorieTarget;
+  const editedProtein  = parseInt(document.getElementById('preview-protein').value)  || currentPlanData.proteinGrams;
+  const editedCarbs    = parseInt(document.getElementById('preview-carbs').value)    || currentPlanData.carbsGrams;
+  const editedFat      = parseInt(document.getElementById('preview-fat').value)      || currentPlanData.fatGrams;
+
+  currentPlanData = {
+    ...currentPlanData,
+    calorieTarget: editedCalories,
+    proteinGrams:  editedProtein,
+    proteinCals:   editedProtein * 4,
+    carbsGrams:    editedCarbs,
+    carbsCals:     editedCarbs * 4,
+    fatGrams:      editedFat,
+    fatCals:       editedFat * 9,
+  };
+
+  currentPlanData.mealPlan = generateMealPlan(
+    currentPlanData.mealsPerDay,
+    currentPlanData.proteinGrams,
+    currentPlanData.carbsGrams,
+    currentPlanData.fatGrams,
+    currentPlanData.calorieTarget,
+    currentPlanData.goal,
+    clientProfile
+  );
+
+  exportPDF();
+  showStep('step-client');
+}
+
 // --- PDF Export ---
 
 function exportPDF() {
@@ -2982,8 +3063,8 @@ function exportPDF() {
   const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  const data = computeNutrition();
-  const mealPlan = generateMealPlan(data.mealsPerDay, data.proteinGrams, data.carbsGrams, data.fatGrams, data.calorieTarget, data.goal, clientProfile);
+  const data = currentPlanData;
+  const mealPlan = data.mealPlan;
   const tips = generateTips(data.goal, selectedClient);
   const foodList = getFoodList(data);
   const groceryList = getWeeklyGroceryList(data);

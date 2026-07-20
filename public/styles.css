@@ -259,6 +259,50 @@ h3 {
   border-color: var(--primary);
 }
 
+/* Preview / Adjust section */
+.preview-adjust {
+  background: var(--primary);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.preview-adjust h3 {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.preview-meta {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 16px;
+}
+
+.preview-macro-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.preview-macro-grid .form-group label {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.preview-macro-grid .form-group input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.preview-macro-grid .form-group input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
 /* Nutrition Plan Styles */
 #nutrition-plan {
   line-height: 1.7;
