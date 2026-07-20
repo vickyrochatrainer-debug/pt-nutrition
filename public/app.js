@@ -103,7 +103,7 @@ function getClientProfile(client) {
   const allergies     = getClientField(client, 'q11', 'allerg', 'intoleran');
   const dislikes      = getClientField(client, 'q12', 'dislike', 'refuse');
   const favoriteFoods = getClientField(client, 'q13', 'favorite', 'favourit', 'already eat');
-  const dietaryStyle  = getClientField(client, 'q14', 'dietary style', 'diet style', 'dietary preference', 'vegan', 'vegetarian', 'carnivore');
+  const dietaryStyle  = getClientField(client, 'q14', 'dietary style', 'diet style', 'dietary preference', 'eating style', 'food preference', 'diet type', 'vegan', 'vegetarian', 'carnivore');
   const firstMealTime = getClientField(client, 'q7', 'first meal', 'eating window', 'intermittent fasting');
   const trainingType  = getClientField(client, 'q16', 'type of training', 'training type', 'frequency');
   const trainingTime  = getClientField(client, 'q17', 'time of day', 'training time', 'when do you train');
@@ -150,11 +150,11 @@ function parseConsistencyScore(text) {
 
 function parseDietaryStyle(text) {
   const t = (text || '').toLowerCase();
-  const isVegan = t.includes('vegan');
-  const isVegetarian = !isVegan && (t.includes('vegetarian') || t.includes('veggie'));
+  const isVegan = t.includes('vegan') || t.includes('plant-based') || t.includes('plant based') || t.includes('no animal products') || t.includes('only plants');
+  const isVegetarian = !isVegan && (t.includes('vegetarian') || t.includes('veggie') || t.includes('no meat') || t.includes('without meat') || t.includes('meat free') || t.includes('meat-free'));
   const isKeto = t.includes('keto');
   const isLowCarb = !isKeto && (t.includes('low carb') || t.includes('low-carb'));
-  const isCarnivore = t.includes('carnivore');
+  const isCarnivore = t.includes('carnivore') || t.includes('only meat') || t.includes('only animal');
   const isPescatarian = !isVegan && !isVegetarian && (t.includes('pescatarian') || t.includes('pescetarian'));
   return { isVegan, isVegetarian, isLowCarb, isKeto, isCarnivore, isPescatarian };
 }
@@ -238,6 +238,7 @@ function selectClient(index) {
   showStep('step-data');
   displayQuestionnaireSummary();
   prefillFromQuestionnaire();
+  displayPreviousPlan();
 }
 
 function displayQuestionnaireSummary() {
@@ -311,12 +312,16 @@ function prefillFromQuestionnaire() {
   const goalKey = keys.find(k => k.toLowerCase().includes('goal') || k.toLowerCase().includes('q2'));
   if (goalKey && selectedClient[goalKey]) {
     const goalVal = selectedClient[goalKey].toLowerCase();
-    if (goalVal.includes('loss') || goalVal.includes('lose') || goalVal.includes('fat') || goalVal.includes('lean')) {
-      document.getElementById('goal').value = 'fat-loss';
-    } else if (goalVal.includes('gain') || goalVal.includes('muscle') || goalVal.includes('build') || goalVal.includes('bulk')) {
-      document.getElementById('goal').value = 'muscle-gain';
+    const wantsLoss = goalVal.includes('loss') || goalVal.includes('lose') || goalVal.includes('drop') || goalVal.includes('slim') || goalVal.includes('shred') || goalVal.includes('cut ') || goalVal.includes('cutting');
+    const wantsGain = goalVal.includes('gain') || goalVal.includes('muscle') || goalVal.includes('build') || goalVal.includes('bulk') || goalVal.includes('mass');
+    if (wantsLoss && wantsGain) {
+      document.getElementById('goal').value = 'body-recomposition';
     } else if (goalVal.includes('recomp') || goalVal.includes('body comp') || goalVal.includes('composition') || goalVal.includes('tone') || goalVal.includes('toning')) {
       document.getElementById('goal').value = 'body-recomposition';
+    } else if (wantsLoss || goalVal.includes('fat') || goalVal.includes('lean') || goalVal.includes('weight loss')) {
+      document.getElementById('goal').value = 'fat-loss';
+    } else if (wantsGain || goalVal.includes('weight gain') || goalVal.includes('gain weight')) {
+      document.getElementById('goal').value = 'muscle-gain';
     } else {
       document.getElementById('goal').value = 'maintenance';
     }
@@ -372,7 +377,14 @@ function computeNutrition() {
     goalLabel = 'Maintenance';
   }
 
-  const minCalories = gender === 'male' ? 1600 : 1400;
+  let minCalories;
+  if (goal === 'muscle-gain') {
+    minCalories = gender === 'male' ? 2000 : 1800;
+  } else if (goal === 'body-recomposition') {
+    minCalories = gender === 'male' ? 1700 : 1500;
+  } else {
+    minCalories = gender === 'male' ? 1600 : 1400;
+  }
   if (calorieTarget < minCalories) calorieTarget = minCalories;
 
   const d = (clientProfile && clientProfile.diet) ? clientProfile.diet : {};
@@ -418,7 +430,7 @@ function computeNutrition() {
       fatGrams = Math.round((calorieTarget - proteinCals - carbsCals) / 9);
       fatCals  = fatGrams * 9;
     } else if (d.isLowCarb) {
-      carbsGrams = Math.min(carbsGrams, 100); carbsCals = carbsGrams * 4;
+      carbsGrams = Math.min(carbsGrams, 50); carbsCals = carbsGrams * 4;
       fatGrams = Math.round((calorieTarget - proteinCals - carbsCals) / 9);
       fatCals  = fatGrams * 9;
     }
@@ -444,6 +456,69 @@ function computeNutrition() {
     waterLiters,
     clientName: getClientName(selectedClient),
   };
+}
+
+// --- Nutrition History (localStorage) ---
+
+function getClientHistoryKey(client) {
+  const email = getClientEmail(client);
+  const name = getClientName(client);
+  const id = (email || name).replace(/[^a-zA-Z0-9]/g, '_');
+  return `pt_plan_${id}`;
+}
+
+function saveClientPlan(data) {
+  if (!selectedClient) return;
+  try {
+    const key = getClientHistoryKey(selectedClient);
+    const plan = {
+      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      goalLabel: data.goalLabel,
+      calorieTarget: data.calorieTarget,
+      proteinGrams: data.proteinGrams,
+      carbsGrams: data.carbsGrams,
+      fatGrams: data.fatGrams,
+      waterLiters: data.waterLiters,
+      mealsPerDay: data.mealsPerDay,
+      dietaryStyle: clientProfile ? clientProfile.dietaryStyle : '',
+    };
+    localStorage.setItem(key, JSON.stringify(plan));
+  } catch (e) {}
+}
+
+function displayPreviousPlan() {
+  const container = document.getElementById('previous-plan-section');
+  if (!selectedClient || !container) return;
+
+  let plan = null;
+  try {
+    const key = getClientHistoryKey(selectedClient);
+    const saved = localStorage.getItem(key);
+    if (saved) plan = JSON.parse(saved);
+  } catch (e) {}
+
+  if (!plan) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="previous-plan-card">
+      <div class="previous-plan-label">Previous Plan on File</div>
+      <div class="previous-plan-date">Generated on ${plan.date}</div>
+      <div class="previous-plan-stats">
+        <span class="prev-stat"><strong>Goal:</strong> ${plan.goalLabel}</span>
+        <span class="prev-stat"><strong>Calories:</strong> ${plan.calorieTarget} kcal/day</span>
+        <span class="prev-stat"><strong>Protein:</strong> ${plan.proteinGrams}g</span>
+        <span class="prev-stat"><strong>Carbs:</strong> ${plan.carbsGrams}g</span>
+        <span class="prev-stat"><strong>Fats:</strong> ${plan.fatGrams}g</span>
+        <span class="prev-stat"><strong>Meals:</strong> ${plan.mealsPerDay}/day</span>
+        <span class="prev-stat"><strong>Water:</strong> ${plan.waterLiters}L/day</span>
+        ${plan.dietaryStyle ? `<span class="prev-stat"><strong>Diet:</strong> ${plan.dietaryStyle}</span>` : ''}
+      </div>
+      <p class="previous-plan-note">Generate and export a new plan below — only the new plan will be included in the PDF.</p>
+    </div>
+  `;
 }
 
 function generatePlan() {
@@ -475,6 +550,7 @@ function generatePlan() {
   });
 
   document.getElementById('nutrition-plan').innerHTML = planHTML;
+  saveClientPlan(data);
   showStep('step-plan');
 }
 
@@ -2413,13 +2489,13 @@ function getFoodsToAvoid(goal, client) {
 
 function getProgressNote(goal, weight) {
   if (goal === 'fat-loss') {
-    return `Following this plan consistently, you can expect to lose approximately 1-1.5 lbs per week. In 4 weeks, that's 4-6 lbs of fat loss while preserving muscle mass. Results depend on consistency, training intensity, sleep, and stress management. We will reassess and adjust your plan every 2-4 weeks based on your progress.`;
+    return `Following your plan consistently, you can expect to lose approximately 1–1.5 lbs per week. In 4 weeks, that is 4–6 lbs of fat loss while preserving muscle mass. Results depend on your consistency, training intensity, sleep, and stress management. Reassess and adjust your plan every 2–4 weeks based on your progress.`;
   } else if (goal === 'muscle-gain') {
-    return `With consistent training and nutrition, you can expect to gain approximately 0.5-1 lb of lean muscle per week. In 8 weeks, that's 4-8 lbs of quality muscle gain. Track your lifts and body measurements to monitor progress. We will reassess your calorie needs every 3-4 weeks as your weight increases.`;
+    return `With consistent training and nutrition, you can expect to gain approximately 0.5–1 lb of lean muscle per week. In 8 weeks, that is 4–8 lbs of quality muscle gain. Track your lifts and body measurements to monitor your progress. Reassess your calorie needs every 3–4 weeks as your weight increases.`;
   } else if (goal === 'body-recomposition') {
-    return `Body recomposition is the process of simultaneously losing fat and building muscle. With a small 200-calorie deficit and high protein intake, expect subtle but meaningful changes over 8-12 weeks — less body fat and more muscle definition. The scale may barely move, but your body composition will shift. Track measurements and progress photos monthly rather than relying on the scale. Reassess macros every 4 weeks.`;
+    return `Body recomposition is the process of simultaneously losing fat and building muscle. With a small 200-calorie deficit and high protein intake, expect subtle but meaningful changes over 8–12 weeks — less body fat and more muscle definition. The scale may barely move, but your body composition will shift. Track your measurements and progress photos monthly rather than relying on the scale. Reassess your macros every 4 weeks.`;
   }
-  return `Following this maintenance plan, your weight should remain stable within 1-2 lbs. Focus on body composition changes rather than the scale. If you notice unintended weight gain or loss, we will adjust your portions and macros accordingly. Check-ins every 2-4 weeks recommended.`;
+  return `Following this maintenance plan, your weight should remain stable within 1–2 lbs. Focus on body composition changes rather than the scale. If you notice unintended weight gain or loss, adjust your portions and macros accordingly. Check-ins every 2–4 weeks are recommended.`;
 }
 
 // --- Tips ---
@@ -2547,7 +2623,7 @@ function getPastExperienceNote(profile) {
   } else if (lower.includes('yo-yo') || lower.includes('gained it back') || lower.includes('lost and regained')) {
     insight = 'You have experienced yo-yo dieting. The focus here is on a modest, sustainable calorie adjustment rather than a crash approach — this protects your metabolism and makes results last.';
   } else {
-    insight = `Based on your experience — "${exp}" — this plan has been designed to build on what you know and address gaps. Let your PT know during check-ins what is and is not working so we can refine it.`;
+    insight = `Based on your experience — "${exp}" — this plan has been designed to build on what you know and address gaps. Track what is working and what is not, and adjust as you progress.`;
   }
 
   return insight;
@@ -2560,7 +2636,7 @@ function buildPlanHTML(data) {
   if (data.personalNote && data.personalNote.trim()) {
     personalNoteHTML = `
       <div class="plan-section">
-        <h3>Personal Note from Your Trainer</h3>
+        <h3>Personal Notes</h3>
         <div class="personal-note-box">${data.personalNote.replace(/\n/g, '<br>')}</div>
       </div>
     `;
@@ -2879,7 +2955,7 @@ function exportPDF() {
 
   // --- Personal Note ---
   if (data.personalNote && data.personalNote.trim()) {
-    sectionTitle('Personal Note from Your Trainer');
+    sectionTitle('Personal Notes');
     bodyText(data.personalNote);
     y += 4;
   }
