@@ -348,7 +348,7 @@ h3 {
 }
 
 .swap-picker-modal {
-  background: var(--surface);
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 24px;
   width: 100%;
@@ -366,6 +366,7 @@ h3 {
 }
 
 .swap-candidate {
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 14px 16px;
@@ -376,7 +377,7 @@ h3 {
 
 .swap-candidate:hover {
   border-color: var(--accent);
-  background: rgba(255,255,255,0.03);
+  background: #eef1f3;
 }
 
 .swap-candidate-title {
