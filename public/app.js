@@ -2027,6 +2027,42 @@ function getBreakfastSwapOptions(p, c, f) {
         'Drizzle honey over everything. Eat immediately.',
       ],
     },
+    {
+      title: 'Turkey Breast & Avocado Toast',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.35)}g sliced deli turkey breast`,
+        `${Math.max(1, Math.round(c * 0.55 / 0.43 / 28))} slices whole grain bread, toasted`,
+        `${Math.round(f * 0.5 / 0.15)}g avocado, mashed`,
+        '1/2 cup cherry tomatoes, halved',
+        '1 tbsp lemon juice',
+        'Salt, pepper, red pepper flakes',
+      ],
+      instructions: [
+        'Toast bread until golden and crispy.',
+        'Mash avocado with lemon juice, salt, and pepper.',
+        'Spread avocado generously on toast.',
+        'Layer turkey slices on top.',
+        'Finish with cherry tomatoes and a pinch of red pepper flakes.',
+      ],
+    },
+    {
+      title: 'Protein Berry Smoothie Bowl',
+      ingredients: [
+        '1 scoop vanilla protein powder (~25g protein)',
+        `${Math.round(c * 0.45 / 0.14)}g frozen mixed berries`,
+        '1/2 cup oat milk (or water for thicker texture)',
+        `${Math.round(c * 0.2 / 0.60)}g granola (nut-free)`,
+        `${Math.round(f * 0.35 / 0.12)}g sunflower seeds`,
+        '1/2 cup sliced strawberries',
+        '1 tsp honey',
+      ],
+      instructions: [
+        'Blend protein powder, frozen berries, and oat milk until very thick — add liquid sparingly.',
+        'Pour into a wide bowl.',
+        'Top with granola, sunflower seeds, and fresh strawberries.',
+        'Drizzle honey over everything. Eat immediately with a spoon.',
+      ],
+    },
   ];
 }
 
@@ -2085,6 +2121,42 @@ function getLunchSwapOptions(p, c, f) {
         'Toss sweet potato cubes with a little oil and salt. Roast at 425°F / 220°C for 22 minutes.',
         'Warm black beans in a small pan. Season with salt.',
         'Build the bowl: sweet potato and beans on the base, pulled chicken and red cabbage on top, avocado on the side. Squeeze lime juice and scatter cilantro.',
+      ],
+    },
+    {
+      title: 'Lemon Herb Salmon & Quinoa Bowl',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.25)}g salmon fillet`,
+        `${Math.round(c * 0.5 / 0.21)}g cooked quinoa`,
+        '1 cup baby spinach',
+        '1/2 cup cherry tomatoes, halved',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '2 tbsp fresh lemon juice, dill, salt, pepper',
+      ],
+      instructions: [
+        'Season salmon with olive oil, lemon juice, dill, salt, and pepper.',
+        'Pan-sear or bake salmon at 400°F / 200°C for 12–15 minutes until it flakes.',
+        'Fluff quinoa and season with salt and a squeeze of lemon.',
+        'Assemble bowl: quinoa base, spinach, cherry tomatoes, salmon on top.',
+        'Drizzle any pan juices over the bowl before serving.',
+      ],
+    },
+    {
+      title: 'Ground Turkey & Stuffed Sweet Potato',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.29)}g lean ground turkey`,
+        `${Math.round(c * 0.55 / 0.20)}g sweet potato (1 large)`,
+        `${Math.round(p * 0.1 / 0.089)}g canned black beans, rinsed`,
+        '3 tbsp salsa',
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '1 tsp cumin, chili powder, salt',
+      ],
+      instructions: [
+        'Pierce sweet potato, microwave 6–8 minutes or bake at 425°F / 220°C for 45 minutes until tender.',
+        'Brown ground turkey in a skillet. Season with cumin, chili powder, and salt.',
+        'Warm black beans. Slice sweet potato open and fluff the inside.',
+        'Fill with turkey, black beans, and salsa.',
+        'Top with avocado and serve immediately.',
       ],
     },
   ];
@@ -2149,6 +2221,42 @@ function getDinnerSwapOptions(p, c, f) {
         'Slice pork and serve with sweet potato and caramelised apple.',
       ],
     },
+    {
+      title: 'Herb Roasted Chicken Thighs with Roasted Vegetables',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.25)}g chicken thighs, boneless skinless`,
+        `${Math.round(c * 0.45 / 0.07)}g mixed vegetables (zucchini, bell pepper, cherry tomatoes)`,
+        `${Math.round(c * 0.2 / 0.20)}g baby potatoes, halved`,
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '3 cloves garlic, fresh thyme, rosemary',
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C.',
+        'Toss potatoes and vegetables with olive oil, garlic, thyme, and paprika. Spread on a baking sheet.',
+        'Season chicken with salt, pepper, and rosemary. Nestle among the vegetables.',
+        'Roast 30–35 minutes until chicken is golden and reaches 165°F / 74°C internally.',
+        'Rest 5 minutes before serving.',
+      ],
+    },
+    {
+      title: 'Baked Tilapia with Brown Rice & Greens',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.26)}g tilapia fillet`,
+        `${Math.round(c * 0.55 / 0.28)}g cooked brown rice`,
+        '2 cups baby spinach or arugula',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '2 tbsp lemon juice, 2 cloves garlic, fresh parsley',
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C.',
+        'Place tilapia on a lined baking sheet. Drizzle with olive oil and lemon juice. Season with garlic, paprika, salt, and pepper.',
+        'Bake 12–15 minutes until tilapia flakes easily with a fork.',
+        'Warm brown rice. Wilt spinach with a touch of olive oil in a pan, 1–2 minutes.',
+        'Plate rice, top with wilted greens and tilapia. Garnish with parsley.',
+      ],
+    },
   ];
 }
 
@@ -2203,6 +2311,40 @@ function getSnackSwapOptions(p, c, f) {
         'Spread Dijon mustard, then roll tightly.',
         'Secure with a toothpick if needed. Repeat.',
         'Serve with crackers on the side.',
+      ],
+    },
+    {
+      title: 'Sliced Chicken with Sweet Potato Wedges',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.31)}g chicken breast, pre-cooked and sliced`,
+        `${Math.round(c * 0.55 / 0.20)}g sweet potato, cut into wedges`,
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '1 tsp paprika, garlic powder, salt',
+        '1/4 cup salsa or hot sauce (optional dip)',
+      ],
+      instructions: [
+        'Toss sweet potato wedges with olive oil, paprika, garlic powder, and salt.',
+        'Roast at 425°F / 220°C for 25 minutes until golden and slightly crispy.',
+        'Slice pre-cooked or freshly baked chicken breast.',
+        'Serve chicken alongside sweet potato wedges with salsa for dipping.',
+      ],
+    },
+    {
+      title: 'Smoked Salmon Cucumber Bites',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.20)}g smoked salmon, torn into pieces`,
+        '1 large cucumber, cut into thick rounds',
+        `${Math.round(c * 0.45 / 0.14)}g banana or piece of fruit (on the side)`,
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil (drizzle)`,
+        '1 tbsp capers',
+        'Fresh dill, lemon juice, black pepper',
+      ],
+      instructions: [
+        'Slice cucumber into thick rounds and arrange on a plate.',
+        'Top each round with a piece of smoked salmon.',
+        'Add a caper and a small sprig of dill on each.',
+        'Finish with a squeeze of lemon juice, drizzle of olive oil, and black pepper.',
+        'Serve with fruit on the side for the carbohydrate portion.',
       ],
     },
   ];
@@ -2267,6 +2409,44 @@ function getBrunchSwapOptions(p, c, f) {
         'Top with banana, berries, and nut butter. Drizzle maple syrup.',
       ],
     },
+    {
+      title: 'Sweet Potato Turkey Hash',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.29)}g lean ground turkey`,
+        `${Math.round(c * 0.45 / 0.20)}g sweet potato, small cubes`,
+        '1/2 red onion, diced',
+        '1 red bell pepper, diced',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '1 tsp cumin, smoked paprika, garlic powder, salt',
+        'Fresh cilantro and hot sauce to serve',
+      ],
+      instructions: [
+        'Heat olive oil in a large skillet over medium-high heat.',
+        'Add sweet potato. Cook 8–10 minutes, stirring, until fork-tender and slightly caramelised.',
+        'Add onion and bell pepper. Cook 3 minutes.',
+        'Push vegetables to the side. Add turkey, breaking it up and browning it, 6–8 minutes.',
+        'Season everything with cumin, paprika, garlic powder, and salt. Toss to combine. Serve with cilantro.',
+      ],
+    },
+    {
+      title: 'Salmon & Quinoa Brunch Bowl',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.25)}g smoked or baked salmon`,
+        `${Math.round(c * 0.45 / 0.21)}g cooked quinoa`,
+        '1/2 cup cucumber, diced',
+        '1/2 cup cherry tomatoes, halved',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '2 tbsp lemon juice, fresh dill, salt, pepper',
+        `${Math.round(f * 0.15 / 0.15)}g avocado, sliced`,
+      ],
+      instructions: [
+        'Fluff quinoa and season with olive oil, lemon juice, dill, salt, and pepper.',
+        'Spoon quinoa into a wide bowl.',
+        'Arrange cucumber, cherry tomatoes, and avocado around the bowl.',
+        'Place salmon on top. Break into flakes if baked, or layer if smoked.',
+        'Finish with extra lemon juice and fresh dill.',
+      ],
+    },
   ];
 }
 
@@ -2325,6 +2505,43 @@ function getLargeDinnerSwapOptions(p, c, f) {
         'Sear chicken in butter 3–4 min per side until golden. Remove.',
         'Add mushrooms and garlic to pan, cook 4 minutes. Add Marsala and thyme, simmer 3 minutes.',
         'Return chicken to sauce. Simmer 3 more minutes. Serve with roasted potatoes.',
+      ],
+    },
+    {
+      title: 'Pan-Seared Cod with Lemon Potato & Spinach',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.18)}g cod fillet`,
+        `${Math.round(c * 0.5 / 0.17)}g baby potatoes, halved and boiled`,
+        '2 cups fresh spinach',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '3 cloves garlic, lemon zest and juice',
+        'Salt, pepper, fresh parsley',
+      ],
+      instructions: [
+        'Boil potatoes until tender, 12–15 minutes. Drain and toss with a little olive oil, salt, and lemon zest.',
+        'Season cod with salt and pepper.',
+        'Heat olive oil in a skillet over medium-high heat. Sear cod 3–4 minutes per side until golden and flaking.',
+        'In the same pan, wilt spinach with garlic 1–2 minutes.',
+        'Plate potatoes, spinach, and cod. Squeeze lemon juice over everything. Garnish with parsley.',
+      ],
+    },
+    {
+      title: 'Lean Beef & Vegetable Stew with Rice',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.26)}g lean beef stew meat, cubed`,
+        `${Math.round(c * 0.45 / 0.28)}g cooked brown rice`,
+        '1 cup diced carrots and celery',
+        '1 cup diced potatoes',
+        '1 can (400g) diced tomatoes',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+        '2 cloves garlic, 1 onion diced, thyme, salt, pepper',
+      ],
+      instructions: [
+        'Brown beef in olive oil in a heavy pot over medium-high heat, 5–6 minutes. Remove.',
+        'Sauté onion and garlic in the same pot 3 minutes.',
+        'Add carrots, celery, potatoes, diced tomatoes, thyme, salt, and pepper.',
+        'Return beef. Add 1 cup water or broth. Bring to a boil, reduce heat, simmer 30 minutes until beef is tender.',
+        'Serve stew over brown rice.',
       ],
     },
   ];
@@ -4350,15 +4567,23 @@ function swapMealOption(mealIdx, slot) {
   );
 
   const currentTitle = meal[`option${slot}`].title;
-  const shownElsewhere = new Set(
-    ['A', 'B', 'C'].filter(s => s !== slot).map(s => meal[`option${s}`].title)
-  );
 
-  const candidates = pool.filter(o => o.title !== currentTitle && !shownElsewhere.has(o.title));
+  // Pick up to 3 distinct options, excluding only the slot being replaced.
+  // Deduplicating by title handles cases where pool cycling produces repeated entries.
+  const seenTitles = new Set([currentTitle]);
+  const candidates = [];
+  for (const o of pool) {
+    if (!seenTitles.has(o.title)) {
+      candidates.push(o);
+      seenTitles.add(o.title);
+      if (candidates.length === 3) break;
+    }
+  }
+
   if (candidates.length === 0) return;
 
-  pendingSwap = { mealIdx, slot, candidates: candidates.slice(0, 3) };
-  showSwapPicker(mealIdx, slot, pendingSwap.candidates);
+  pendingSwap = { mealIdx, slot, candidates };
+  showSwapPicker(mealIdx, slot, candidates);
 }
 
 function showSwapPicker(mealIdx, slot, candidates) {
