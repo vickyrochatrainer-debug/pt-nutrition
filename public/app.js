@@ -352,6 +352,9 @@ function computeNutrition() {
   const goalWeight = goalWeightLbs ? (parseFloat(goalWeightLbs) / 2.205).toFixed(1) : '';
   const height = heightIn * 2.54;
 
+  console.log('[Nutrition Calc] Inputs:', { weightLbs, heightIn, age, gender, activityLevel, goal });
+  console.log('[Nutrition Calc] Converted:', { weightKg: weight.toFixed(2), heightCm: height.toFixed(2) });
+
   // Mifflin-St Jeor BMR
   let bmr;
   if (gender === 'male') {
@@ -360,8 +363,10 @@ function computeNutrition() {
     bmr = 10 * weight + 6.25 * height - 5 * age - 161;
   }
   bmr = Math.round(bmr);
+  console.log('[Nutrition Calc] BMR (Mifflin-St Jeor):', bmr, 'kcal');
 
   const tdee = Math.round(bmr * activityLevel);
+  console.log('[Nutrition Calc] TDEE (BMR × activity', activityLevel + '):', tdee, 'kcal');
 
   let calorieTarget, goalLabel;
   if (goal === 'fat-loss') {
@@ -377,6 +382,7 @@ function computeNutrition() {
     calorieTarget = tdee;
     goalLabel = 'Maintenance';
   }
+  console.log('[Nutrition Calc] Calorie target (' + goalLabel + '):', calorieTarget, 'kcal');
 
   const d = (clientProfile && clientProfile.diet) ? clientProfile.diet : {};
 
@@ -622,6 +628,29 @@ function generatePlan() {
 
   clientProfile = getClientProfile(selectedClient);
   const data = computeNutrition();
+
+  const minSafe = data.gender === 'male' ? 1400 : 1200;
+  if (data.calorieTarget < minSafe) {
+    document.getElementById('nutrition-plan').innerHTML = `
+      <div class="calc-error">
+        <div class="calc-error-title">Calculation Error — Please Check Inputs</div>
+        <p>The calculated calorie target is <strong>${data.calorieTarget} kcal</strong>, which is dangerously low and likely the result of incorrect input values.</p>
+        <div class="calc-error-breakdown">
+          <div class="calc-error-row"><span>Weight entered</span><span>${data.weightLbs} lbs → ${data.weight.toFixed(1)} kg</span></div>
+          <div class="calc-error-row"><span>Height entered</span><span>${data.heightIn} in → ${data.height.toFixed(1)} cm</span></div>
+          <div class="calc-error-row"><span>Age</span><span>${data.age}</span></div>
+          <div class="calc-error-row"><span>BMR</span><span>${data.bmr} kcal</span></div>
+          <div class="calc-error-row"><span>Activity multiplier</span><span>${data.activityLevel}</span></div>
+          <div class="calc-error-row"><span>TDEE</span><span>${data.tdee} kcal</span></div>
+          <div class="calc-error-row error-row-highlight"><span>Calorie target</span><span>${data.calorieTarget} kcal</span></div>
+        </div>
+        <p class="calc-error-hint">Height must be entered in <strong>total inches</strong> — for example, 5&apos;4&quot; = 64 inches, 5&apos;7&quot; = 67 inches. Check the browser console for full debug logs.</p>
+      </div>
+    `;
+    showStep('step-plan');
+    return;
+  }
+
   const mealPlan = generateMealPlan(data.mealsPerDay, data.proteinGrams, data.carbsGrams, data.fatGrams, data.calorieTarget, data.goal, clientProfile);
 
   currentPlanData = { ...data, mealPlan };

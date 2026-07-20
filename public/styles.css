@@ -303,6 +303,59 @@ h3 {
   outline: none;
 }
 
+/* Calculation error card */
+.calc-error {
+  background: #fff5f5;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.calc-error-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.calc-error p {
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.calc-error-breakdown {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+.calc-error-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-light);
+}
+
+.calc-error-row:last-child {
+  border-bottom: none;
+}
+
+.error-row-highlight {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.calc-error-hint {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 8px;
+}
+
 /* Nutrition Plan Styles */
 #nutrition-plan {
   line-height: 1.7;
