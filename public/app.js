@@ -2063,6 +2063,78 @@ function getBreakfastSwapOptions(p, c, f) {
         'Drizzle honey over everything. Eat immediately with a spoon.',
       ],
     },
+    {
+      title: 'Overnight Protein Oats with Mixed Berries',
+      ingredients: [
+        `${Math.round(c * 0.55 / 0.60)}g rolled oats`,
+        '1 scoop vanilla protein powder (~25g protein)',
+        '1 cup oat milk or low-fat cow\'s milk',
+        '1 tbsp chia seeds',
+        '1/2 cup mixed berries (fresh or frozen)',
+        '1 tsp honey',
+        'Pinch of cinnamon',
+      ],
+      instructions: [
+        'Stir oats, protein powder, chia seeds, and milk together in a jar or container.',
+        'Mix until protein powder is fully dissolved.',
+        'Add honey and cinnamon. Stir again.',
+        'Cover and refrigerate overnight (minimum 6 hours).',
+        'In the morning, stir well and top with fresh or thawed berries. Eat cold.',
+      ],
+    },
+    {
+      title: 'Lean Ground Turkey Breakfast Scramble',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.29)}g lean ground turkey`,
+        `${Math.round(c * 0.45 / 0.20)}g sweet potato, small cubes`,
+        '1/2 cup diced onion and bell pepper',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '1 tsp cumin, smoked paprika, garlic powder, salt',
+        '1/4 cup salsa (optional)',
+      ],
+      instructions: [
+        'Heat olive oil in a skillet over medium-high heat. Add sweet potato cubes.',
+        'Cook 8 minutes, stirring, until soft and slightly golden.',
+        'Add onion and bell pepper. Cook 3 minutes.',
+        'Add ground turkey, breaking it up. Cook 6–8 minutes until browned.',
+        'Season with cumin, paprika, garlic powder, and salt. Serve with salsa if desired.',
+      ],
+    },
+    {
+      title: 'Tropical Mango Protein Smoothie',
+      ingredients: [
+        '1 scoop vanilla protein powder (~25g protein)',
+        `${Math.round(c * 0.5 / 0.13)}g frozen mango chunks`,
+        `${Math.round(c * 0.15 / 0.14)}g frozen banana`,
+        '1 cup light coconut milk (carton)',
+        `${Math.round(f * 0.35 / 0.12)}g sunflower seeds (blend in for fat)`,
+        '1/2 cup ice cubes',
+      ],
+      instructions: [
+        'Add all ingredients to a blender.',
+        'Blend 45–60 seconds until completely smooth and creamy.',
+        'If too thick, add a splash of water or coconut milk.',
+        'Serve immediately in a tall glass.',
+      ],
+    },
+    {
+      title: 'Smoked Turkey & Sweet Potato Breakfast Hash',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.35)}g smoked turkey breast, diced`,
+        `${Math.round(c * 0.5 / 0.20)}g sweet potato, small cubes`,
+        '1/2 red onion, diced',
+        '1/2 cup cherry tomatoes, halved',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '1 tsp smoked paprika, garlic powder, salt, pepper',
+      ],
+      instructions: [
+        'Heat olive oil in a large skillet over medium-high heat.',
+        'Add sweet potato and cook 8–10 minutes, stirring, until golden.',
+        'Add red onion and cook 3 minutes.',
+        'Stir in smoked turkey. Cook 3 minutes until heated through.',
+        'Add cherry tomatoes. Season with paprika, garlic powder, salt, and pepper. Toss and serve.',
+      ],
+    },
   ];
 }
 
@@ -2157,6 +2229,81 @@ function getLunchSwapOptions(p, c, f) {
         'Warm black beans. Slice sweet potato open and fluff the inside.',
         'Fill with turkey, black beans, and salsa.',
         'Top with avocado and serve immediately.',
+      ],
+    },
+    {
+      title: 'Pork Tenderloin & Veggie Brown Rice Bowl',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g pork tenderloin, sliced thin`,
+        `${Math.round(c * 0.5 / 0.28)}g cooked brown rice`,
+        '1 cup broccoli florets, steamed',
+        '1/2 cup shredded carrots',
+        '1 tbsp low-sodium soy sauce or coconut aminos',
+        `${Math.round(f * 0.35 / 0.92)} tsp sesame oil`,
+        '2 cloves garlic, 1 tsp grated ginger, salt',
+      ],
+      instructions: [
+        'Season pork slices with salt, garlic, and ginger.',
+        'Sear in sesame oil over high heat 3–4 minutes until cooked through.',
+        'Steam broccoli 4 minutes. Warm rice.',
+        'Assemble bowl: rice base, broccoli and carrots on the sides, pork on top.',
+        'Drizzle soy sauce over everything and serve.',
+      ],
+    },
+    {
+      title: 'Baked Cod & Roasted Vegetable Power Bowl',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.18)}g cod fillet`,
+        `${Math.round(c * 0.4 / 0.21)}g cooked quinoa`,
+        `${Math.round(c * 0.2 / 0.07)}g mixed vegetables (zucchini, cherry tomatoes, red onion)`,
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '2 tbsp lemon juice, garlic, fresh parsley',
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C.',
+        'Toss vegetables with olive oil, paprika, salt, and pepper. Spread on a baking sheet.',
+        'Season cod with lemon juice, garlic, salt, and pepper. Place on the same sheet.',
+        'Roast 15–18 minutes until cod flakes and vegetables are golden.',
+        'Serve over quinoa with parsley garnish.',
+      ],
+    },
+    {
+      title: 'Chicken & Avocado Stuffed Whole Wheat Pita',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.31)}g grilled chicken breast, sliced`,
+        `${Math.max(1, Math.round(c * 0.45 / 0.43 / 28))} whole wheat pita pockets`,
+        `${Math.round(f * 0.45 / 0.15)}g avocado, sliced`,
+        '1/2 cup cucumber, sliced',
+        '1/2 cup cherry tomatoes, halved',
+        '2 tbsp hummus',
+        'Lemon juice, salt, pepper, fresh mint',
+      ],
+      instructions: [
+        'Grill or pan-sear chicken breast with salt and pepper until cooked through. Slice.',
+        'Warm pita in a dry pan 30 seconds per side.',
+        'Spread hummus inside each pita.',
+        'Stuff with chicken slices, avocado, cucumber, and cherry tomatoes.',
+        'Squeeze lemon juice inside and add fresh mint. Serve immediately.',
+      ],
+    },
+    {
+      title: 'Lean Beef & Black Bean Rice Bowl',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.26)}g lean ground beef (90% lean)`,
+        `${Math.round(c * 0.35 / 0.28)}g cooked brown rice`,
+        `${Math.round(p * 0.15 / 0.089)}g canned black beans, rinsed`,
+        `${Math.round(f * 0.4 / 0.15)}g avocado, diced`,
+        '1/4 cup salsa, 1/4 cup diced red onion',
+        '1 tsp cumin, chili powder, garlic powder, salt',
+        'Lime juice and cilantro',
+      ],
+      instructions: [
+        'Brown ground beef in a skillet. Drain excess fat. Season with cumin, chili powder, garlic powder, and salt.',
+        'Warm black beans in a small pan with a pinch of cumin.',
+        'Build the bowl: rice base, beef and beans on top.',
+        'Add avocado, salsa, and red onion.',
+        'Finish with lime juice and cilantro.',
       ],
     },
   ];
@@ -2257,6 +2404,79 @@ function getDinnerSwapOptions(p, c, f) {
         'Plate rice, top with wilted greens and tilapia. Garnish with parsley.',
       ],
     },
+    {
+      title: 'Lemon Garlic Shrimp & Asparagus with Rice',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.24)}g large shrimp, peeled and deveined`,
+        `${Math.round(c * 0.55 / 0.28)}g cooked brown rice`,
+        '1 bunch asparagus, trimmed',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '3 cloves garlic, 2 tbsp lemon juice, fresh parsley',
+        'Salt, pepper, red pepper flakes',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C. Toss asparagus with olive oil, salt, and pepper. Roast 12 minutes.',
+        'Season shrimp with salt, pepper, and red pepper flakes.',
+        'Heat a skillet over high heat. Cook shrimp 1–2 minutes per side until pink. Add garlic in the last 30 seconds.',
+        'Add lemon juice to the pan and toss.',
+        'Serve shrimp and asparagus over rice. Garnish with parsley.',
+      ],
+    },
+    {
+      title: 'Turkey & Veggie Stuffed Bell Peppers',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.29)}g lean ground turkey`,
+        '3 large bell peppers, halved and seeded',
+        `${Math.round(c * 0.35 / 0.28)}g cooked brown rice`,
+        `${Math.round(c * 0.15 / 0.089)}g canned black beans, rinsed`,
+        '1/2 cup diced tomatoes, 1/4 cup salsa',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '1 tsp cumin, chili powder, garlic powder, salt',
+      ],
+      instructions: [
+        'Preheat oven to 375°F / 190°C.',
+        'Brown ground turkey in olive oil. Season with cumin, chili powder, and garlic powder.',
+        'Mix turkey with rice, black beans, tomatoes, and salsa.',
+        'Stuff mixture into pepper halves. Place in a baking dish.',
+        'Bake 25–30 minutes until peppers are tender. Serve hot.',
+      ],
+    },
+    {
+      title: 'Pan-Seared Chicken with Mushroom Sauce & Cauliflower Mash',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g chicken breast`,
+        `${Math.round(c * 0.5 / 0.05)}g cauliflower, florets`,
+        '1.5 cups mushrooms, sliced',
+        `${Math.round(f * 0.35 / 0.81)}g butter`,
+        '1/2 cup chicken broth, 2 cloves garlic, fresh thyme',
+        '1 tsp olive oil, salt, pepper',
+      ],
+      instructions: [
+        'Steam or boil cauliflower 12 minutes until very tender. Drain and mash with half the butter, salt, and pepper until smooth.',
+        'Season chicken with salt and pepper. Sear in olive oil 4–5 minutes per side until golden and cooked through. Rest 5 minutes.',
+        'In the same pan, add remaining butter and garlic. Sauté mushrooms 5 minutes until golden.',
+        'Add broth and thyme. Simmer 3 minutes to reduce slightly.',
+        'Plate cauliflower mash, chicken, and mushroom sauce.',
+      ],
+    },
+    {
+      title: 'One-Pan Pork Chops with Sweet Potato & Broccoli',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g boneless pork chops`,
+        `${Math.round(c * 0.45 / 0.20)}g sweet potato, cubed`,
+        '2 cups broccoli florets',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '2 cloves garlic, 1 tsp smoked paprika, dried thyme',
+        'Salt, pepper, lemon juice',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C.',
+        'Toss sweet potato with olive oil, paprika, and salt. Spread on a baking sheet. Roast 15 minutes.',
+        'Season pork chops with garlic, thyme, salt, and pepper.',
+        'Push sweet potato to the sides. Add pork chops and broccoli to the pan.',
+        'Roast 15–18 more minutes until pork reaches 145°F / 63°C. Squeeze lemon over everything before serving.',
+      ],
+    },
   ];
 }
 
@@ -2345,6 +2565,71 @@ function getSnackSwapOptions(p, c, f) {
         'Add a caper and a small sprig of dill on each.',
         'Finish with a squeeze of lemon juice, drizzle of olive oil, and black pepper.',
         'Serve with fruit on the side for the carbohydrate portion.',
+      ],
+    },
+    {
+      title: 'Beef Jerky, Apple & Sunflower Seeds',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.33)}g beef jerky (low sodium)`,
+        '1 medium apple, sliced',
+        `${Math.round(f * 0.45 / 0.59)}g sunflower seeds`,
+        `${Math.round(c * 0.25 / 0.65)}g dried cranberries`,
+      ],
+      instructions: [
+        'Arrange apple slices on one side of a plate.',
+        'Portion jerky, sunflower seeds, and dried cranberries into sections.',
+        'This is a grab-and-go snack — no prep needed.',
+        'Pair the sweet apple and cranberries with the savory jerky for balanced flavour.',
+      ],
+    },
+    {
+      title: 'Baked Chicken Bites with Guacamole',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.31)}g chicken breast, cubed`,
+        `${Math.round(f * 0.45 / 0.15)}g avocado, mashed (guacamole base)`,
+        '1 tbsp lime juice, 1/4 tsp cumin, salt',
+        `${Math.round(c * 0.5 / 0.10)} whole grain crackers or rice cakes`,
+        '2 tbsp pico de gallo or salsa',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C. Season chicken cubes with salt, cumin, and a squeeze of lime.',
+        'Spread on a baking sheet. Bake 15–18 minutes until cooked through and slightly golden.',
+        'Mash avocado with remaining lime juice, cumin, and salt to make guacamole.',
+        'Serve chicken bites alongside guacamole and crackers for dipping.',
+      ],
+    },
+    {
+      title: 'Tuna & Avocado Lettuce Cups',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.26)}g canned tuna in water, drained`,
+        '3–4 large butter lettuce leaves',
+        `${Math.round(f * 0.45 / 0.15)}g avocado, diced`,
+        '1/4 cup cherry tomatoes, halved',
+        '1 tbsp lime juice',
+        `${Math.round(c * 0.45 / 0.14)}g banana or piece of fruit (on the side)`,
+        'Salt, pepper, fresh cilantro',
+      ],
+      instructions: [
+        'Flake tuna into a bowl. Add avocado, tomatoes, lime juice, salt, pepper, and cilantro. Toss gently.',
+        'Spoon tuna mixture into lettuce leaves.',
+        'Serve with fruit on the side for the carb portion.',
+      ],
+    },
+    {
+      title: 'Cottage Cheese Bowl with Pineapple & Seeds',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.11)}g low-fat cottage cheese`,
+        `${Math.round(c * 0.5 / 0.13)}g fresh or canned pineapple chunks (in juice, drained)`,
+        `${Math.round(f * 0.5 / 0.12)}g sunflower seeds`,
+        '1 tsp honey',
+        'Pinch of cinnamon',
+      ],
+      instructions: [
+        'Spoon cottage cheese into a bowl.',
+        'Top with pineapple chunks.',
+        'Sprinkle sunflower seeds over the top.',
+        'Drizzle honey and add a pinch of cinnamon.',
+        'Eat immediately — simple, high-protein, no cooking needed.',
       ],
     },
   ];
@@ -2447,6 +2732,79 @@ function getBrunchSwapOptions(p, c, f) {
         'Finish with extra lemon juice and fresh dill.',
       ],
     },
+    {
+      title: 'Smoked Turkey & Roasted Vegetable Brunch Hash',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.35)}g smoked turkey breast, diced`,
+        `${Math.round(c * 0.5 / 0.20)}g sweet potato, small cubes`,
+        '1/2 cup diced red bell pepper and zucchini',
+        '1/4 red onion, diced',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '1 tsp smoked paprika, garlic powder, salt, pepper',
+        'Fresh parsley to garnish',
+      ],
+      instructions: [
+        'Heat olive oil in a large oven-safe skillet over medium-high heat.',
+        'Add sweet potato and cook 10 minutes until golden, stirring occasionally.',
+        'Add bell pepper, zucchini, and red onion. Cook 4 minutes.',
+        'Stir in smoked turkey. Season with paprika, garlic powder, salt, and pepper.',
+        'Cook 3 minutes until everything is hot and caramelised. Garnish with parsley.',
+      ],
+    },
+    {
+      title: 'Tropical Protein Smoothie Bowl',
+      ingredients: [
+        '1 scoop vanilla protein powder (~25g protein)',
+        `${Math.round(c * 0.4 / 0.13)}g frozen mango`,
+        `${Math.round(c * 0.15 / 0.14)}g frozen banana`,
+        '1/2 cup light coconut milk (carton)',
+        `${Math.round(f * 0.35 / 0.12)}g sunflower seeds`,
+        '1/2 cup sliced kiwi or pineapple',
+        '1 tsp coconut flakes (unsweetened)',
+      ],
+      instructions: [
+        'Blend protein powder, frozen mango, banana, and coconut milk until very thick.',
+        'Use minimal liquid — the bowl should be thick enough to hold toppings.',
+        'Pour into a wide bowl.',
+        'Top with sunflower seeds, fresh tropical fruit, and coconut flakes.',
+      ],
+    },
+    {
+      title: 'Chicken Avocado Whole Grain Flatbread',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.31)}g grilled chicken breast, sliced`,
+        `${Math.max(1, Math.round(c * 0.5 / 0.43 / 28))} whole grain flatbreads or naan`,
+        `${Math.round(f * 0.45 / 0.15)}g avocado, sliced`,
+        '1/2 cup cherry tomatoes, halved',
+        '1/4 red onion, thinly sliced',
+        '1 tbsp lemon juice, fresh basil or arugula',
+        'Salt, pepper, drizzle of olive oil',
+      ],
+      instructions: [
+        'Warm flatbread in a dry pan or toaster until slightly crispy.',
+        'Arrange avocado slices across the flatbread.',
+        'Top with sliced chicken, cherry tomatoes, and red onion.',
+        'Finish with lemon juice, fresh basil or arugula, salt, and a drizzle of olive oil.',
+      ],
+    },
+    {
+      title: 'Lean Beef & Sweet Potato Brunch Hash',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.26)}g lean ground beef (90% lean)`,
+        `${Math.round(c * 0.5 / 0.20)}g sweet potato, cubed`,
+        '1/2 cup diced onion, 1/2 cup diced bell pepper',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '1 tsp cumin, chili powder, garlic powder, salt',
+        'Fresh cilantro and lime wedge to serve',
+      ],
+      instructions: [
+        'Heat olive oil in a large skillet over medium-high heat. Add sweet potato.',
+        'Cook 10 minutes until golden and fork-tender.',
+        'Add onion and bell pepper. Cook 3 minutes.',
+        'Push to the side. Add beef, breaking it up. Brown 6–8 minutes.',
+        'Season everything with cumin, chili powder, garlic, and salt. Toss together. Serve with cilantro and lime.',
+      ],
+    },
   ];
 }
 
@@ -2542,6 +2900,81 @@ function getLargeDinnerSwapOptions(p, c, f) {
         'Add carrots, celery, potatoes, diced tomatoes, thyme, salt, and pepper.',
         'Return beef. Add 1 cup water or broth. Bring to a boil, reduce heat, simmer 30 minutes until beef is tender.',
         'Serve stew over brown rice.',
+      ],
+    },
+    {
+      title: 'Slow-Braised Beef Short Ribs with Root Vegetables',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.26)}g bone-in beef short ribs`,
+        `${Math.round(c * 0.4 / 0.20)}g parsnips and carrots, chunked`,
+        `${Math.round(c * 0.2 / 0.17)}g baby potatoes`,
+        '1 can (400g) diced tomatoes',
+        '1 cup beef broth',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+        '3 cloves garlic, 1 onion, fresh thyme, rosemary, salt, pepper',
+      ],
+      instructions: [
+        'Season short ribs with salt and pepper. Sear in olive oil 4–5 minutes per side. Remove.',
+        'Sauté onion and garlic in the same pot 3 minutes.',
+        'Add root vegetables, tomatoes, broth, thyme, and rosemary.',
+        'Return ribs. Cover and simmer 2–2.5 hours on low, or braise at 325°F / 160°C until fall-off-the-bone tender.',
+        'Serve ribs over root vegetables with the braising liquid as sauce.',
+      ],
+    },
+    {
+      title: 'Glazed Salmon with Edamame Brown Rice',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.25)}g salmon fillet`,
+        `${Math.round(c * 0.4 / 0.28)}g cooked brown rice`,
+        `${Math.round(p * 0.15 / 0.11)}g shelled edamame`,
+        '2 tbsp soy sauce or tamari, 1 tbsp honey, 1 tsp sesame oil',
+        '1 tsp grated ginger, 1 clove garlic',
+        `${Math.round(f * 0.25 / 0.92)} tsp avocado oil`,
+        '1 tsp sesame seeds, sliced green onion',
+      ],
+      instructions: [
+        'Mix soy sauce, honey, sesame oil, ginger, and garlic into a glaze.',
+        'Brush salmon with glaze. Rest 10 minutes.',
+        'Heat avocado oil in an oven-safe pan over medium-high heat. Sear salmon 2 minutes skin-side up.',
+        'Flip and brush with more glaze. Transfer pan to oven at 400°F / 200°C. Bake 8–10 minutes.',
+        'Stir edamame into warm rice. Serve salmon on top. Garnish with sesame seeds and green onion.',
+      ],
+    },
+    {
+      title: 'Chicken Tikka-Style with Basmati Rice',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g chicken breast, cubed`,
+        `${Math.round(c * 0.5 / 0.28)}g cooked basmati rice`,
+        '1/2 cup diced tomatoes',
+        '1/4 cup light coconut milk (carton)',
+        '1/2 onion diced, 2 cloves garlic, 1 tsp grated ginger',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+        '2 tsp garam masala, 1 tsp cumin, 1 tsp turmeric, salt',
+      ],
+      instructions: [
+        'Marinate chicken in half the spices with a pinch of salt for 15 minutes.',
+        'Sear chicken in olive oil over high heat 5–6 minutes until golden. Remove.',
+        'Sauté onion, garlic, and ginger 4 minutes. Add remaining spices, cook 1 minute.',
+        'Add tomatoes and coconut milk. Simmer 5 minutes.',
+        'Return chicken and simmer 8 minutes until cooked through. Serve over basmati rice.',
+      ],
+    },
+    {
+      title: 'Grilled Swordfish with Roasted Ratatouille',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.20)}g swordfish steak`,
+        `${Math.round(c * 0.4 / 0.07)}g mixed vegetables (zucchini, eggplant, bell pepper, tomatoes)`,
+        `${Math.round(c * 0.2 / 0.21)}g cooked quinoa`,
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '3 cloves garlic, fresh basil, thyme',
+        'Salt, pepper, lemon juice',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C. Chop all vegetables into chunks.',
+        'Toss vegetables with olive oil, garlic, thyme, salt, and pepper. Spread on a baking sheet.',
+        'Roast 25–28 minutes until soft and caramelised.',
+        'Season swordfish with salt, pepper, and lemon juice. Grill or pan-sear 3–4 minutes per side.',
+        'Plate quinoa, top with ratatouille and swordfish. Garnish with fresh basil.',
       ],
     },
   ];
@@ -4558,26 +4991,28 @@ function buildMealCardHTML(mealIdx, meal) {
 function swapMealOption(mealIdx, slot) {
   if (!currentPlanData) return;
   const meal = currentPlanData.mealPlan[mealIdx];
+  const currentTitle = meal[`option${slot}`].title;
 
-  const pool = getFullOptionPool(
+  // Each slot (A/B/C) gets its own dedicated window of 3 from the 9-option pool.
+  // A → indices 0-2, B → indices 3-5, C → indices 6-8.
+  const allExtras = getSwapPool(
     mealIdx,
     currentPlanData.mealsPerDay,
     meal.protein, meal.carbs, meal.fats,
     clientProfile
   );
 
-  const currentTitle = meal[`option${slot}`].title;
+  const slotIndex = { 'A': 0, 'B': 1, 'C': 2 }[slot] ?? 0;
+  const windowStart = slotIndex * 3;
+  let candidates = allExtras
+    .slice(windowStart, windowStart + 3)
+    .filter(o => o.title !== currentTitle);
 
-  // Pick up to 3 distinct options, excluding only the slot being replaced.
-  // Deduplicating by title handles cases where pool cycling produces repeated entries.
-  const seenTitles = new Set([currentTitle]);
-  const candidates = [];
-  for (const o of pool) {
-    if (!seenTitles.has(o.title)) {
-      candidates.push(o);
-      seenTitles.add(o.title);
-      if (candidates.length === 3) break;
-    }
+  // Backfill from the rest of the pool if diet/allergen filtering thinned the window
+  if (candidates.length < 3) {
+    const used = new Set([currentTitle, ...candidates.map(o => o.title)]);
+    const fallback = allExtras.filter(o => !used.has(o.title));
+    candidates = [...candidates, ...fallback].slice(0, 3);
   }
 
   if (candidates.length === 0) return;
