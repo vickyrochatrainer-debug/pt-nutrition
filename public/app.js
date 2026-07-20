@@ -443,6 +443,7 @@ function computeNutrition() {
     weightLbs, goalWeightLbs, heightIn, bodyFat,
     mealsPerDay, personalNote,
     bmr, tdee, calorieTarget,
+    proteinPercent, carbsPercent, fatPercent,
     proteinGrams, proteinCals, carbsGrams, carbsCals, fatGrams, fatCals,
     waterLiters,
     clientName: getClientName(selectedClient),
@@ -627,6 +628,7 @@ function generatePlan() {
   saveClientPlan(data);
 
   document.getElementById('nutrition-plan').innerHTML = buildPreviewHTML(currentPlanData);
+  attachPreviewListeners();
   showStep('step-plan');
 }
 
@@ -3018,6 +3020,30 @@ function buildPreviewHTML(data) {
       ${mealsHTML}
     </div>
   `;
+}
+
+function attachPreviewListeners() {
+  const calInput = document.getElementById('preview-calories');
+  const pInput   = document.getElementById('preview-protein');
+  const cInput   = document.getElementById('preview-carbs');
+  const fInput   = document.getElementById('preview-fat');
+
+  calInput.addEventListener('input', () => {
+    const cals = parseInt(calInput.value) || 0;
+    const { proteinPercent, carbsPercent, fatPercent } = currentPlanData;
+    pInput.value = Math.round(cals * proteinPercent / 4);
+    cInput.value = Math.round(cals * carbsPercent / 4);
+    fInput.value = Math.round(cals * fatPercent / 9);
+  });
+
+  [pInput, cInput, fInput].forEach(inp => {
+    inp.addEventListener('input', () => {
+      const p = parseInt(pInput.value) || 0;
+      const c = parseInt(cInput.value) || 0;
+      const f = parseInt(fInput.value) || 0;
+      calInput.value = p * 4 + c * 4 + f * 9;
+    });
+  });
 }
 
 function approveAndExport() {
