@@ -303,6 +303,38 @@ h3 {
   outline: none;
 }
 
+/* Swap button */
+.meal-option-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.meal-option-header h5 {
+  margin: 0;
+  flex: 1;
+}
+
+.btn-swap {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 3px 9px;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-swap:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* Nutrition Plan Styles */
 #nutrition-plan {
   line-height: 1.7;

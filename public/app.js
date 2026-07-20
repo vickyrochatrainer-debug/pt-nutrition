@@ -3,6 +3,7 @@ let selectedClient = null;
 let clientHeaders = [];
 let clientProfile = null;
 let currentPlanData = null;
+let swapHistory = {};
 
 document.addEventListener('DOMContentLoaded', () => {
   registerServiceWorker();
@@ -634,6 +635,7 @@ function generatePlan() {
   const mealPlan = generateMealPlan(data.mealsPerDay, data.proteinGrams, data.carbsGrams, data.fatGrams, data.calorieTarget, data.goal, clientProfile);
 
   currentPlanData = { ...data, mealPlan };
+  swapHistory = {};
   saveClientPlan(data);
 
   document.getElementById('nutrition-plan').innerHTML = buildPreviewHTML(currentPlanData);
@@ -1967,6 +1969,1348 @@ function getCarnivoreSnackOptions(p, c, f) {
   ];
 }
 
+// --- Swap Option Pools (extras beyond the initial A/B/C) ---
+
+function getBreakfastSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Turkey Bacon & Spinach Egg Muffins',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.7 / 6))} whole eggs`,
+        `${Math.round(p * 0.25 / 0.35)}g turkey bacon`,
+        '1 cup baby spinach, roughly chopped',
+        '1/4 cup diced red bell pepper',
+        `${Math.round(p * 0.1 / 0.07)}g shredded mozzarella`,
+        'Salt, pepper, garlic powder',
+      ],
+      instructions: [
+        'Preheat oven to 375°F / 190°C. Grease a 6-cup muffin tin.',
+        'Cook turkey bacon until slightly crispy. Chop into small pieces.',
+        'Whisk eggs with salt, pepper, and garlic powder.',
+        'Divide spinach, bell pepper, and turkey bacon among muffin cups.',
+        'Pour egg mixture over. Top with mozzarella. Bake 18–20 minutes until set.',
+      ],
+    },
+    {
+      title: 'Peanut Butter Banana Protein Smoothie',
+      ingredients: [
+        '1 scoop vanilla whey protein powder (~25g protein)',
+        `${Math.round(c * 0.45 / 0.14)}g banana (fresh or frozen)`,
+        `${Math.round(f * 0.5 / 6)}g natural peanut butter`,
+        '1 cup unsweetened almond milk',
+        '1/2 cup ice cubes',
+        '1 tsp honey (optional)',
+      ],
+      instructions: [
+        'Add all ingredients to a blender.',
+        'Blend 45–60 seconds until completely smooth.',
+        'Taste and add honey if more sweetness is needed.',
+        'Drink immediately — best served cold.',
+      ],
+    },
+    {
+      title: 'Smoked Salmon Scrambled Eggs',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.55 / 6))} whole eggs`,
+        `${Math.round(p * 0.35 / 0.20)}g smoked salmon, roughly torn`,
+        `${Math.round(f * 0.35 / 0.92)} tsp butter`,
+        '2 tbsp cream cheese (light)',
+        '1 tbsp fresh chives or dill, chopped',
+        'Black pepper, lemon zest',
+      ],
+      instructions: [
+        'Whisk eggs with a pinch of pepper.',
+        'Melt butter over low heat. Pour in eggs and stir slowly with a spatula.',
+        'When eggs are almost set, stir in cream cheese until just melted.',
+        'Remove from heat. Fold in smoked salmon and chives.',
+        'Serve immediately with a squeeze of lemon zest.',
+      ],
+    },
+  ];
+}
+
+function getLunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Shrimp & Brown Rice Stir-Fry',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.24)}g raw shrimp, peeled and deveined`,
+        `${Math.round(c * 0.55 / 0.28)}g cooked brown rice`,
+        '1 cup mixed vegetables (snap peas, carrots, bok choy)',
+        '1 tbsp low-sodium soy sauce',
+        '1 tsp sesame oil, 2 cloves garlic, 1 tsp grated ginger',
+        `${Math.round(f * 0.4 / 0.92)} tsp avocado oil`,
+      ],
+      instructions: [
+        'Season shrimp with a pinch of salt and pepper.',
+        'Heat avocado oil in a wok or large skillet over high heat.',
+        'Stir-fry shrimp 2–3 minutes until pink. Remove and set aside.',
+        'Add garlic and ginger to the pan, stir 30 seconds. Add vegetables, stir-fry 3 minutes.',
+        'Return shrimp. Add soy sauce and sesame oil. Toss and serve over rice.',
+      ],
+    },
+    {
+      title: 'Beef & Veggie Whole Wheat Wrap',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.26)}g lean ground beef (90% lean)`,
+        `${Math.max(1, Math.round(c * 0.4 / 0.43 / 28))} large whole wheat tortillas`,
+        '1 cup shredded romaine lettuce',
+        '1/2 cup diced tomatoes',
+        '2 tbsp Greek yogurt (as sour cream sub)',
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '1 tsp cumin, chili powder, salt',
+      ],
+      instructions: [
+        'Brown ground beef in a skillet. Season with cumin, chili powder, and salt.',
+        'Warm tortilla in a dry pan 30 seconds each side.',
+        'Layer beef, lettuce, tomatoes, and avocado down the center.',
+        'Add a dollop of Greek yogurt. Roll tightly and slice in half.',
+      ],
+    },
+    {
+      title: 'Egg Salad Stuffed Bell Peppers',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.8 / 6))} hard boiled eggs`,
+        '2 large bell peppers, halved and seeded',
+        '1 tbsp avocado oil mayonnaise',
+        '1 tsp Dijon mustard',
+        '2 tbsp celery, finely diced',
+        '1 tbsp chives, chopped',
+        `${Math.round(c * 0.5 / 0.5)}g cooked quinoa (stirred into salad)`,
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Hard boil eggs: boil 10 minutes, cool in ice water, peel.',
+        'Chop eggs and mix with mayo, mustard, celery, chives, and quinoa.',
+        'Season well with salt, pepper, and paprika.',
+        'Spoon filling generously into bell pepper halves.',
+        'Serve immediately or refrigerate and eat cold.',
+      ],
+    },
+  ];
+}
+
+function getDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Turkey Meatballs with Zucchini Noodles',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.29)}g lean ground turkey`,
+        '2 large zucchini, spiralized',
+        `${Math.round(c * 0.4 / 0.10)}g crushed tomatoes (canned)`,
+        `${Math.round(p * 0.1 / 0.07)}g Parmesan, grated`,
+        '2 cloves garlic, 1/4 onion finely diced',
+        '1 egg, Italian seasoning, salt, pepper',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+      ],
+      instructions: [
+        'Mix turkey with egg, half the garlic, Parmesan, Italian seasoning, salt, and pepper. Form into balls.',
+        'Brown meatballs in olive oil 6–8 minutes, turning. Transfer to a plate.',
+        'Sauté onion and remaining garlic 3 minutes. Add crushed tomatoes. Simmer 10 minutes.',
+        'Return meatballs to sauce, simmer 8 more minutes until cooked through.',
+        'Sauté zucchini noodles in a separate pan 2–3 minutes. Serve meatballs and sauce on top.',
+      ],
+    },
+    {
+      title: 'Shrimp & Broccoli Brown Rice Bowl',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.24)}g large shrimp, peeled and deveined`,
+        `${Math.round(c * 0.55 / 0.28)}g cooked brown rice`,
+        '2 cups broccoli florets',
+        '1 tbsp oyster sauce or hoisin sauce',
+        `${Math.round(f * 0.4 / 0.92)} tsp sesame oil`,
+        '2 cloves garlic, 1 tsp grated ginger',
+        '1 tsp sesame seeds (garnish)',
+      ],
+      instructions: [
+        'Blanch broccoli in boiling water 3 minutes. Drain.',
+        'Heat sesame oil in a wok. Add garlic and ginger, stir 30 seconds.',
+        'Add shrimp. Cook 2–3 minutes until pink, stirring.',
+        'Add broccoli and oyster sauce. Toss well, cook 1 more minute.',
+        'Serve over brown rice. Sprinkle sesame seeds.',
+      ],
+    },
+    {
+      title: 'Pork Tenderloin with Sweet Potato & Apple',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g pork tenderloin`,
+        `${Math.round(c * 0.55 / 0.20)}g sweet potato, cubed`,
+        '1 apple, cored and sliced',
+        `${Math.round(f * 0.35 / 0.81)}g butter`,
+        '2 cloves garlic, fresh rosemary',
+        '1 tsp olive oil, salt, pepper, paprika',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C. Toss sweet potato with olive oil and paprika. Roast 20 minutes.',
+        'Season pork with salt, pepper, garlic, and rosemary.',
+        'Sear pork in butter in an oven-safe skillet 3 minutes per side until browned.',
+        'Transfer to oven and roast 12–15 minutes until internal temp is 145°F / 63°C.',
+        'Rest 5 minutes. Add apple slices to the skillet drippings and sauté 3 minutes.',
+        'Slice pork and serve with sweet potato and caramelised apple.',
+      ],
+    },
+  ];
+}
+
+function getSnackSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Tuna on Whole Grain Rice Cakes',
+      ingredients: [
+        `${Math.round(p * 0.75 / 0.26)}g canned tuna in water, drained`,
+        `${Math.max(2, Math.round(c * 0.5 / 8))} plain brown rice cakes`,
+        '1 tbsp avocado oil mayo',
+        '1 tsp Dijon mustard',
+        '1/4 cup cucumber, thinly sliced',
+        'Salt, pepper, lemon juice',
+      ],
+      instructions: [
+        'Mix tuna with mayo, mustard, lemon juice, salt, and pepper.',
+        'Layer cucumber slices on each rice cake.',
+        'Spoon tuna mixture on top.',
+        'Eat immediately — best when tuna is fresh.',
+      ],
+    },
+    {
+      title: 'Hard Boiled Eggs with Mixed Nuts',
+      ingredients: [
+        `${Math.max(2, Math.round(p * 0.7 / 6))} hard boiled eggs`,
+        `${Math.round(f * 0.6 / 0.50)}g mixed nuts (almonds, walnuts, cashews)`,
+        `${Math.round(c * 0.5 / 0.14)}g banana or a piece of fruit`,
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Hard boil eggs if not already prepared.',
+        'Peel and halve. Season with salt, pepper, and paprika.',
+        'Portion nuts into a small container.',
+        'Serve eggs alongside nuts and fruit for a balanced protein-fat-carb snack.',
+      ],
+    },
+    {
+      title: 'Turkey Roll-Ups with Cheese & Veggies',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.35)}g sliced deli turkey breast`,
+        `${Math.round(f * 0.4 / 0.33)}g Swiss or provolone cheese, sliced`,
+        '1/2 cup baby spinach leaves',
+        '1/4 cup roasted red pepper strips',
+        '1 tsp Dijon mustard per roll-up',
+        `${Math.round(c * 0.5 / 0.10)} small whole grain crackers`,
+      ],
+      instructions: [
+        'Lay out a slice of turkey. Place a slice of cheese on top.',
+        'Add a few spinach leaves and roasted pepper.',
+        'Spread Dijon mustard, then roll tightly.',
+        'Secure with a toothpick if needed. Repeat.',
+        'Serve with crackers on the side.',
+      ],
+    },
+  ];
+}
+
+function getBrunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Shakshuka with Crusty Bread',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.7 / 6))} whole eggs`,
+        `${Math.round(c * 0.4 / 0.5)}g whole grain sourdough, sliced`,
+        '1 can (400g) crushed tomatoes',
+        '1/2 onion diced, 2 cloves garlic, 1/2 red bell pepper diced',
+        '1 tsp cumin, 1 tsp paprika, pinch of cayenne',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+        'Fresh parsley or cilantro to garnish',
+      ],
+      instructions: [
+        'Heat olive oil in a wide skillet. Sauté onion and pepper 5 minutes.',
+        'Add garlic and spices. Cook 1 minute.',
+        'Pour in crushed tomatoes. Simmer 8–10 minutes until sauce thickens.',
+        'Make wells in the sauce. Crack eggs into wells. Cover and cook 6–8 minutes.',
+        'Garnish with parsley. Serve with crusty bread for dipping.',
+      ],
+    },
+    {
+      title: 'Mexican Breakfast Bowl',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.5 / 6))} whole eggs, scrambled`,
+        `${Math.round(p * 0.3 / 0.089)}g canned black beans, rinsed`,
+        `${Math.round(c * 0.4 / 0.28)}g cooked brown rice`,
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '3 tbsp salsa or pico de gallo',
+        '1 tbsp olive oil, cumin, salt',
+        'Fresh lime juice and cilantro',
+      ],
+      instructions: [
+        'Warm black beans in a small pan with cumin and salt.',
+        'Scramble eggs in olive oil over medium heat.',
+        'Warm rice if needed.',
+        'Layer rice, black beans, and eggs in a bowl.',
+        'Top with avocado, salsa, lime juice, and cilantro.',
+      ],
+    },
+    {
+      title: 'Chia Seed Pudding Protein Bowl',
+      ingredients: [
+        '4 tbsp chia seeds',
+        '1 scoop vanilla protein powder (~25g protein)',
+        '1.5 cups unsweetened almond milk',
+        `${Math.round(c * 0.4 / 0.14)}g banana, sliced`,
+        `${Math.round(f * 0.4 / 0.50)}g almond or cashew butter`,
+        '1/2 cup mixed berries',
+        '1 tsp maple syrup or honey',
+      ],
+      instructions: [
+        'Whisk protein powder into almond milk until smooth.',
+        'Stir in chia seeds. Mix well to prevent clumping.',
+        'Refrigerate at least 4 hours or overnight.',
+        'Stir pudding before serving. It should be thick and gel-like.',
+        'Top with banana, berries, and nut butter. Drizzle maple syrup.',
+      ],
+    },
+  ];
+}
+
+function getLargeDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Baked Cod with Herb Quinoa & Roasted Tomatoes',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.20)}g cod fillet`,
+        `${Math.round(c * 0.5 / 0.21)}g cooked quinoa`,
+        '1 cup cherry tomatoes, halved',
+        'Fresh parsley, dill, lemon juice',
+        `${Math.round(f * 0.4 / 0.92)} tsp olive oil`,
+        '2 cloves garlic, salt, pepper',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C.',
+        'Season cod with olive oil, garlic, lemon juice, dill, salt, and pepper.',
+        'Arrange cod and cherry tomatoes on a baking sheet.',
+        'Roast 15–18 minutes until cod flakes easily with a fork and tomatoes blister.',
+        'Toss quinoa with parsley, lemon zest, salt, and olive oil. Serve alongside cod.',
+      ],
+    },
+    {
+      title: 'Lamb Chops with Cauliflower Mash & Greens',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.25)}g lamb loin chops`,
+        `${Math.round(c * 0.6 / 0.05)}g cauliflower, florets`,
+        '2 cups baby spinach or arugula',
+        `${Math.round(f * 0.4 / 0.81)}g butter`,
+        '2 cloves garlic, fresh rosemary, lemon juice',
+        'Salt, pepper, 1 tsp olive oil',
+      ],
+      instructions: [
+        'Season lamb with salt, pepper, garlic, and rosemary.',
+        'Boil cauliflower until very tender, 12 minutes. Drain and mash with butter, salt, and pepper.',
+        'Heat a skillet until hot. Sear lamb 3–4 min per side for medium. Rest 5 minutes.',
+        'Wilt spinach in the same pan with a touch of olive oil and lemon juice.',
+        'Plate cauliflower mash, lamb chops, and wilted greens.',
+      ],
+    },
+    {
+      title: 'Chicken Marsala with Roasted Potatoes',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.31)}g chicken breast, pounded thin`,
+        `${Math.round(c * 0.5 / 0.17)}g baby potatoes, halved`,
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        '1/2 cup Marsala wine or chicken broth',
+        '1 cup mushrooms, sliced',
+        '2 cloves garlic, fresh thyme',
+        '1 tsp olive oil, salt, pepper, flour (light dusting)',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C. Toss potatoes with olive oil and salt. Roast 25 minutes.',
+        'Dust chicken with flour and season with salt and pepper.',
+        'Sear chicken in butter 3–4 min per side until golden. Remove.',
+        'Add mushrooms and garlic to pan, cook 4 minutes. Add Marsala and thyme, simmer 3 minutes.',
+        'Return chicken to sauce. Simmer 3 more minutes. Serve with roasted potatoes.',
+      ],
+    },
+  ];
+}
+
+function getVeganBreakfastSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Chia Seed Pudding with Coconut & Berries',
+      ingredients: [
+        '4 tbsp chia seeds',
+        '1 scoop plant protein powder (~20g protein)',
+        '1.5 cups coconut milk (light, carton) or oat milk',
+        '1/2 cup mixed berries',
+        `${Math.round(f * 0.35 / 0.31)}g hemp seeds`,
+        '1 tbsp unsweetened shredded coconut',
+        '1 tsp agave or maple syrup',
+      ],
+      instructions: [
+        'Whisk plant protein into coconut milk until smooth.',
+        'Stir in chia seeds. Mix well. Refrigerate 6 hours or overnight.',
+        'Stir before serving — should be thick and creamy.',
+        'Top with berries, hemp seeds, shredded coconut, and agave.',
+      ],
+    },
+    {
+      title: 'Savory Chickpea Flour Pancakes',
+      ingredients: [
+        `${Math.round(c * 0.5 / 0.57)}g chickpea flour (besan)`,
+        `${Math.round(p * 0.2 / 0.08)}g extra-firm tofu, crumbled (batter mix-in)`,
+        '1/2 cup water',
+        '1/4 cup spinach, finely chopped',
+        '1/4 red onion, finely diced',
+        `${Math.round(f * 0.35 / 0.92)} tsp olive oil`,
+        '1 tsp cumin, turmeric, salt, pepper',
+      ],
+      instructions: [
+        'Whisk chickpea flour with water, cumin, turmeric, and salt until smooth.',
+        'Stir in crumbled tofu, spinach, and red onion.',
+        'Heat a nonstick skillet with olive oil over medium heat.',
+        'Pour 1/4 cup batter per pancake. Cook 3–4 min per side until golden.',
+        'Serve with salsa, hummus, or avocado on the side.',
+      ],
+    },
+    {
+      title: 'Peanut Butter Banana Smoothie Bowl',
+      ingredients: [
+        '1 scoop plant protein powder (~20g protein)',
+        `${Math.round(c * 0.35 / 0.14)}g frozen banana`,
+        `${Math.round(f * 0.45 / 0.53)}g natural peanut butter`,
+        '1/2 cup unsweetened oat milk (use less for thick bowl)',
+        `${Math.round(c * 0.2 / 0.60)}g rolled oats (granola topping)`,
+        '2 tbsp hemp seeds',
+        '1/2 cup sliced strawberries',
+      ],
+      instructions: [
+        'Blend protein powder, frozen banana, peanut butter, and oat milk until very thick.',
+        'Add only as much milk as needed — bowl consistency should hold a spoon upright.',
+        'Pour into a bowl.',
+        'Top with granola, hemp seeds, and strawberries.',
+      ],
+    },
+  ];
+}
+
+function getVeganLunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Black Bean Tacos with Corn Tortillas',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.089)}g canned black beans, rinsed`,
+        `${Math.max(2, Math.round(c * 0.4 / 0.23 / 28))} small corn tortillas`,
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '1/2 cup red cabbage, shredded',
+        '1/2 cup mango salsa or pico de gallo',
+        '1 tbsp lime juice, cumin, chili powder, salt',
+        '2 tbsp tahini or vegan sour cream',
+      ],
+      instructions: [
+        'Season black beans with cumin, chili powder, and salt. Warm in a pan 3–4 minutes.',
+        'Warm corn tortillas in a dry skillet 30 seconds per side.',
+        'Assemble: beans, red cabbage, avocado, and mango salsa in each tortilla.',
+        'Drizzle tahini and lime juice over the top.',
+        'Serve 2–3 tacos per person.',
+      ],
+    },
+    {
+      title: 'Edamame Soba Noodle Bowl',
+      ingredients: [
+        `${Math.round(c * 0.55 / 0.25)}g soba noodles (dry)`,
+        `${Math.round(p * 0.7 / 0.11)}g shelled edamame`,
+        '1 cup shredded red cabbage',
+        '1/2 cup shredded carrots',
+        '2 tbsp low-sodium soy sauce or tamari',
+        `${Math.round(f * 0.4 / 0.50)}g sesame tahini`,
+        '1 tsp sesame oil, 1 tbsp rice vinegar, 1 tsp grated ginger',
+      ],
+      instructions: [
+        'Cook soba noodles per package directions. Rinse under cold water.',
+        'Steam edamame 4–5 minutes until warm.',
+        'Whisk soy sauce, tahini, sesame oil, rice vinegar, and ginger into a dressing.',
+        'Toss noodles with dressing, cabbage, carrots, and edamame.',
+        'Serve at room temperature or chilled. Sprinkle sesame seeds if desired.',
+      ],
+    },
+    {
+      title: 'Roasted Cauliflower & Chickpea Power Bowl',
+      ingredients: [
+        `${Math.round(p * 0.6 / 0.089)}g canned chickpeas, rinsed`,
+        `${Math.round(c * 0.45 / 0.05)}g cauliflower florets`,
+        `${Math.round(c * 0.2 / 0.21)}g cooked quinoa`,
+        `${Math.round(f * 0.35 / 0.30)}g hummus`,
+        '2 cups mixed greens',
+        '2 tbsp lemon juice, 1 tsp cumin, paprika, salt',
+        `${Math.round(f * 0.2 / 0.92)} tsp olive oil`,
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C.',
+        'Toss chickpeas and cauliflower with olive oil, cumin, paprika, and salt.',
+        'Spread on a baking sheet. Roast 25–28 minutes until golden and slightly crispy.',
+        'Assemble bowl: quinoa base, mixed greens, roasted cauliflower and chickpeas.',
+        'Dollop hummus on the side. Drizzle lemon juice over everything.',
+      ],
+    },
+  ];
+}
+
+function getVeganDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Chickpea & Spinach Tikka Masala',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.089)}g canned chickpeas, rinsed`,
+        `${Math.round(c * 0.45 / 0.28)}g cooked basmati rice`,
+        '1 can (400ml) light coconut milk',
+        '1 can (400g) diced tomatoes',
+        '2 cups baby spinach',
+        '1 onion diced, 3 cloves garlic, 1 tsp ginger',
+        `${Math.round(f * 0.2 / 0.92)} tsp coconut oil`,
+        '2 tsp garam masala, 1 tsp cumin, 1 tsp turmeric, 1 tsp paprika, salt',
+      ],
+      instructions: [
+        'Heat coconut oil. Sauté onion 5 minutes. Add garlic, ginger, and spices. Cook 1 minute.',
+        'Add tomatoes and coconut milk. Simmer 10 minutes.',
+        'Add chickpeas and simmer 15 more minutes until sauce thickens.',
+        'Stir in spinach and cook until just wilted, 2 minutes.',
+        'Season with salt. Serve over basmati rice.',
+      ],
+    },
+    {
+      title: 'Mushroom & Walnut Bolognese with Pasta',
+      ingredients: [
+        `${Math.round(c * 0.5 / 0.35)}g whole wheat pasta (dry)`,
+        `${Math.round(p * 0.4 / 0.032)}g mushrooms (cremini or portobello), finely diced`,
+        `${Math.round(f * 0.45 / 0.50)}g walnuts, finely chopped`,
+        '1 can (400g) crushed tomatoes',
+        '1/2 onion diced, 3 cloves garlic, 2 tbsp tomato paste',
+        `${Math.round(f * 0.15 / 0.92)} tsp olive oil`,
+        '1 tsp Italian seasoning, salt, pepper, splash of red wine (optional)',
+      ],
+      instructions: [
+        'Heat olive oil. Sauté onion 5 minutes. Add garlic and tomato paste, cook 1 minute.',
+        'Add mushrooms. Cook over high heat 8–10 minutes until all moisture evaporates.',
+        'Stir in walnuts. Add crushed tomatoes, red wine (optional), Italian seasoning.',
+        'Simmer 20 minutes, stirring occasionally, until rich and thick. Season with salt.',
+        'Cook pasta per package directions. Serve sauce over pasta.',
+      ],
+    },
+    {
+      title: 'Sweet Potato & Black Bean Enchilada Bowl',
+      ingredients: [
+        `${Math.round(p * 0.55 / 0.089)}g canned black beans, rinsed`,
+        `${Math.round(c * 0.4 / 0.20)}g sweet potato, cubed and roasted`,
+        `${Math.round(c * 0.2 / 0.21)}g cooked brown rice`,
+        '1/2 cup enchilada sauce (red)',
+        `${Math.round(f * 0.4 / 0.15)}g avocado, sliced`,
+        '1/4 cup diced red onion',
+        'Cilantro, lime juice, cumin, salt',
+      ],
+      instructions: [
+        'Roast sweet potato with cumin and salt at 425°F / 220°C for 25 minutes.',
+        'Warm black beans in a pan with a splash of enchilada sauce.',
+        'Assemble bowls: rice, black beans, sweet potato.',
+        'Drizzle enchilada sauce generously over the top.',
+        'Finish with avocado, red onion, cilantro, and lime juice.',
+      ],
+    },
+  ];
+}
+
+function getVeganSnackSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Roasted Chickpeas & Dried Apricots',
+      ingredients: [
+        `${Math.round(p * 0.6 / 0.089)}g canned chickpeas, rinsed and dried`,
+        `${Math.round(c * 0.4 / 0.65)}g dried apricots`,
+        `${Math.round(f * 0.35 / 0.50)}g mixed nuts`,
+        '1 tsp olive oil, cumin, paprika, salt',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C.',
+        'Toss dried chickpeas with olive oil, cumin, paprika, and salt.',
+        'Spread on a baking sheet. Roast 25–30 minutes until very crispy, shaking halfway through.',
+        'Cool completely (they crisp up further as they cool).',
+        'Mix with apricots and nuts. Store in an airtight container up to 3 days.',
+      ],
+    },
+    {
+      title: 'No-Bake Peanut Butter Energy Balls',
+      ingredients: [
+        `${Math.round(f * 0.45 / 0.53)}g natural peanut butter`,
+        `${Math.round(c * 0.5 / 0.60)}g rolled oats`,
+        '2 tbsp hemp seeds',
+        '2 tbsp dark chocolate chips (dairy-free)',
+        '2 tbsp maple syrup',
+        '1 scoop plant protein powder',
+      ],
+      instructions: [
+        'Mix all ingredients together in a bowl until fully combined.',
+        'If mixture is too dry, add 1 tsp water at a time.',
+        'Roll into bite-sized balls (about 1 tbsp each).',
+        'Place on a lined tray and refrigerate 30 minutes until firm.',
+        'Store in an airtight container in the fridge up to 1 week.',
+      ],
+    },
+    {
+      title: 'Apple Slices with Tahini & Hemp Seeds',
+      ingredients: [
+        '1 large apple, sliced',
+        `${Math.round(f * 0.5 / 0.30)}g tahini`,
+        `${Math.round(p * 0.5 / 0.31)}g hemp seeds`,
+        '1 tsp lemon juice',
+        'Pinch of cinnamon',
+      ],
+      instructions: [
+        'Slice apple into thin wedges.',
+        'Mix tahini with lemon juice and a splash of water to make a dippable sauce.',
+        'Arrange apple slices on a plate.',
+        'Drizzle tahini over apples or serve on the side.',
+        'Sprinkle hemp seeds and cinnamon over the top.',
+      ],
+    },
+  ];
+}
+
+function getVegetarianBreakfastSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Banana French Toast with Ricotta',
+      ingredients: [
+        `${Math.max(2, Math.round(p * 0.4 / 6))} whole eggs`,
+        `${Math.max(1, Math.round(c * 0.4 / 0.43 / 28))} slices whole grain bread`,
+        `${Math.round(p * 0.4 / 0.11)}g part-skim ricotta`,
+        `${Math.round(c * 0.25 / 0.14)}g banana, sliced`,
+        '1/2 cup mixed berries',
+        '1 tsp vanilla extract, cinnamon',
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        '1 tsp honey or maple syrup',
+      ],
+      instructions: [
+        'Whisk eggs with vanilla and cinnamon.',
+        'Dip bread slices in egg mixture, coating both sides.',
+        'Melt butter in a nonstick pan over medium heat. Cook bread 2–3 min per side until golden.',
+        'Top French toast with a generous dollop of ricotta.',
+        'Layer banana slices and berries on top. Drizzle honey.',
+      ],
+    },
+    {
+      title: 'Spinach & Mushroom Baked Frittata',
+      ingredients: [
+        `${Math.max(4, Math.round(p * 0.75 / 6))} whole eggs`,
+        `${Math.round(p * 0.2 / 0.07)}g shredded mozzarella`,
+        '1.5 cups mushrooms, sliced',
+        '2 cups fresh spinach',
+        '2 tbsp diced onion',
+        `${Math.round(f * 0.3 / 0.92)} tsp olive oil`,
+        'Salt, pepper, Italian seasoning',
+      ],
+      instructions: [
+        'Preheat oven to 375°F / 190°C.',
+        'Sauté onion and mushrooms in olive oil 5 minutes. Add spinach and wilt 1 minute.',
+        'Whisk eggs with salt, pepper, and Italian seasoning.',
+        'Pour eggs over vegetables in an oven-safe skillet.',
+        'Top with mozzarella. Bake 18–20 minutes until set in the center. Slice and serve.',
+      ],
+    },
+    {
+      title: 'Mango Lassi Protein Bowl',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.10)}g full-fat Greek yogurt`,
+        `${Math.round(c * 0.45 / 0.13)}g frozen mango chunks`,
+        '1/2 cup unsweetened almond milk',
+        `${Math.round(f * 0.35 / 0.50)}g mixed nuts, chopped`,
+        '2 tbsp coconut flakes (unsweetened)',
+        '1 tsp honey or agave',
+        'Pinch of cardamom',
+      ],
+      instructions: [
+        'Blend yogurt, mango, almond milk, and cardamom until smooth.',
+        'Pour into a bowl — should be thicker than a smoothie.',
+        'Top with mixed nuts, coconut flakes, and a drizzle of honey.',
+        'Serve immediately while cold.',
+      ],
+    },
+  ];
+}
+
+function getVegetarianLunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Caprese Quinoa Salad',
+      ingredients: [
+        `${Math.round(c * 0.45 / 0.21)}g cooked quinoa`,
+        `${Math.round(p * 0.6 / 0.18)}g fresh mozzarella, torn`,
+        '1 cup cherry tomatoes, halved',
+        '1 cup fresh basil leaves',
+        `${Math.round(f * 0.45 / 0.92)} tsp extra virgin olive oil`,
+        '1 tbsp balsamic glaze',
+        'Salt, pepper, lemon juice',
+      ],
+      instructions: [
+        'Cook quinoa per package directions. Spread on a plate to cool.',
+        'Arrange quinoa, mozzarella, and tomatoes in a bowl or on a platter.',
+        'Tuck basil leaves throughout.',
+        'Drizzle olive oil and balsamic glaze. Season with salt, pepper, and lemon juice.',
+        'Toss gently and serve at room temperature.',
+      ],
+    },
+    {
+      title: 'Egg Salad Sandwich on Whole Grain',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.8 / 6))} hard boiled eggs`,
+        `${Math.max(2, Math.round(c * 0.5 / 0.43 / 28))} slices whole grain bread`,
+        '1 tbsp avocado oil mayonnaise',
+        '1 tsp Dijon mustard',
+        '2 tbsp celery, finely diced',
+        '1 tbsp chives or dill',
+        `${Math.round(f * 0.3 / 0.15)}g avocado, sliced`,
+        'Salt, pepper, paprika',
+      ],
+      instructions: [
+        'Chop hard boiled eggs and mix with mayo, mustard, celery, and chives.',
+        'Season with salt, pepper, and paprika.',
+        'Toast bread if desired.',
+        'Spread egg salad on one slice. Layer avocado on top.',
+        'Close sandwich and slice. Serve with a side salad if desired.',
+      ],
+    },
+    {
+      title: 'Palak Paneer with Brown Rice',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.18)}g paneer, cubed`,
+        `${Math.round(c * 0.45 / 0.28)}g cooked brown rice`,
+        '2 cups fresh spinach, wilted and blended',
+        '1/2 cup diced tomatoes',
+        '1/2 onion diced, 2 cloves garlic, 1 tsp ginger',
+        `${Math.round(f * 0.3 / 0.92)} tsp ghee or butter`,
+        '1 tsp cumin, garam masala, coriander, salt',
+      ],
+      instructions: [
+        'Pan-fry paneer cubes in ghee until golden on all sides, 5–6 minutes. Set aside.',
+        'In the same pan, sauté onion 4 minutes. Add garlic, ginger, and spices.',
+        'Add tomatoes and cook 3 minutes. Stir in blended spinach.',
+        'Simmer sauce 5 minutes. Add paneer and coat in sauce.',
+        'Serve over brown rice.',
+      ],
+    },
+  ];
+}
+
+function getVegetarianDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Eggplant Parmesan with Pasta',
+      ingredients: [
+        `${Math.round(c * 0.35 / 0.35)}g whole wheat pasta (dry)`,
+        '1 large eggplant, sliced into rounds',
+        `${Math.round(p * 0.55 / 0.25)}g part-skim ricotta`,
+        `${Math.round(p * 0.2 / 0.07)}g mozzarella, shredded`,
+        `${Math.round(p * 0.1 / 0.35)}g Parmesan, grated`,
+        '1 can (400g) crushed tomatoes, seasoned with basil and garlic',
+        '2 eggs, beaten (for breading)',
+        'Breadcrumbs or almond flour, olive oil spray, salt, pepper',
+      ],
+      instructions: [
+        'Preheat oven to 375°F / 190°C. Salt eggplant slices 10 minutes, pat dry.',
+        'Dip eggplant in beaten egg, coat in breadcrumbs. Spray with olive oil. Bake 20 minutes, flipping once.',
+        'Layer in a baking dish: tomato sauce, eggplant, ricotta, mozzarella. Repeat.',
+        'Top with Parmesan. Bake 25 minutes until bubbly and golden.',
+        'Cook pasta per directions. Serve eggplant parm over pasta.',
+      ],
+    },
+    {
+      title: 'Mushroom & Parmesan Risotto',
+      ingredients: [
+        `${Math.round(c * 0.55 / 0.36)}g Arborio rice (dry)`,
+        `${Math.round(p * 0.5 / 0.032)}g mixed mushrooms (cremini, shiitake), sliced`,
+        `${Math.round(p * 0.35 / 0.35)}g Parmesan, grated`,
+        `${Math.round(f * 0.35 / 0.81)}g butter`,
+        '1/2 onion finely diced, 2 cloves garlic',
+        '1/2 cup dry white wine or extra broth',
+        '4 cups warm vegetable broth',
+        'Salt, pepper, fresh thyme',
+      ],
+      instructions: [
+        'Sauté mushrooms in half the butter over high heat 6 minutes until golden. Set aside.',
+        'In the same pot, cook onion and garlic 4 minutes. Add rice and stir 1 minute.',
+        'Add wine and stir until absorbed. Add broth one ladle at a time, stirring constantly.',
+        'Continue adding broth, stirring 18–20 minutes until rice is creamy and al dente.',
+        'Stir in remaining butter, Parmesan, and mushrooms. Season generously.',
+      ],
+    },
+    {
+      title: 'Paneer Tikka Masala with Basmati Rice',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.18)}g paneer, cubed`,
+        `${Math.round(c * 0.45 / 0.28)}g cooked basmati rice`,
+        '1 can (400ml) light coconut milk or heavy cream',
+        '1 can (400g) crushed tomatoes',
+        '1 onion diced, 3 cloves garlic, 1 tsp grated ginger',
+        `${Math.round(f * 0.2 / 0.81)}g butter or ghee`,
+        '2 tsp garam masala, 1 tsp cumin, 1 tsp coriander, 1 tsp paprika, salt',
+      ],
+      instructions: [
+        'Pan-fry paneer cubes in ghee until golden. Set aside.',
+        'Sauté onion 5 minutes. Add garlic, ginger, and all spices. Cook 1 minute.',
+        'Add crushed tomatoes. Simmer 10 minutes.',
+        'Add coconut milk or cream. Simmer 5 more minutes.',
+        'Add paneer. Simmer 8 minutes. Serve over basmati rice.',
+      ],
+    },
+  ];
+}
+
+function getVegetarianSnackSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Ricotta & Honey on Rice Cakes',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.11)}g part-skim ricotta`,
+        `${Math.max(2, Math.round(c * 0.4 / 8))} plain rice cakes`,
+        '1/2 cup sliced strawberries or raspberries',
+        `${Math.round(f * 0.4 / 0.50)}g walnuts, chopped`,
+        '1 tsp honey',
+        'Pinch of cinnamon',
+      ],
+      instructions: [
+        'Spread ricotta generously on each rice cake.',
+        'Top with sliced berries.',
+        'Sprinkle walnuts and cinnamon.',
+        'Drizzle honey. Eat immediately.',
+      ],
+    },
+    {
+      title: 'Caprese Skewers with Balsamic',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.18)}g fresh mozzarella balls (ciliegine)`,
+        '1 cup cherry tomatoes',
+        '1 cup fresh basil leaves',
+        `${Math.round(f * 0.5 / 0.92)} tsp extra virgin olive oil`,
+        '1 tbsp balsamic glaze',
+        'Salt and black pepper',
+        `${Math.round(c * 0.5 / 0.10)} whole grain crackers`,
+      ],
+      instructions: [
+        'Thread onto small skewers: basil leaf, cherry tomato, mozzarella ball. Repeat.',
+        'Arrange on a plate.',
+        'Drizzle olive oil and balsamic glaze over the top.',
+        'Season with salt and black pepper.',
+        'Serve with whole grain crackers on the side.',
+      ],
+    },
+    {
+      title: 'No-Bake Peanut Butter Protein Balls',
+      ingredients: [
+        `${Math.round(f * 0.45 / 0.53)}g natural peanut butter`,
+        `${Math.round(c * 0.5 / 0.60)}g rolled oats`,
+        '1 scoop vanilla protein powder',
+        '2 tbsp honey',
+        '2 tbsp mini dark chocolate chips',
+        '1 tbsp chia seeds',
+      ],
+      instructions: [
+        'Mix all ingredients in a bowl until a thick dough forms.',
+        'If too dry, add 1 tsp milk at a time.',
+        'Roll into 1 tbsp-sized balls.',
+        'Refrigerate on a lined tray for 20–30 minutes until firm.',
+        'Store in the fridge up to 1 week. Makes 6–8 balls.',
+      ],
+    },
+  ];
+}
+
+function getLowCarbBreakfastSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Prosciutto-Wrapped Asparagus & Fried Eggs',
+      ingredients: [
+        `${Math.max(2, Math.round(p * 0.45 / 6))} whole eggs`,
+        `${Math.round(p * 0.35 / 0.25)}g prosciutto`,
+        '8–10 asparagus spears, woody ends snapped off',
+        `${Math.round(f * 0.4 / 0.81)}g butter`,
+        'Salt, pepper, lemon zest',
+      ],
+      instructions: [
+        'Preheat oven to 400°F / 200°C.',
+        'Wrap each asparagus spear with a strip of prosciutto. Place on a baking sheet.',
+        'Roast 12–15 minutes until prosciutto is crispy and asparagus is tender.',
+        'Meanwhile, fry eggs in butter to your liking.',
+        'Plate eggs alongside asparagus wraps. Season with salt, pepper, and lemon zest.',
+      ],
+    },
+    {
+      title: 'Keto Chia Pudding with Berries',
+      ingredients: [
+        '4 tbsp chia seeds',
+        '1.5 cups unsweetened coconut milk (carton)',
+        `${Math.round(p * 0.4 / 0.10)}g full-fat Greek yogurt (stirred in)`,
+        '1/2 cup mixed berries',
+        `${Math.round(f * 0.4 / 0.50)}g macadamia nuts or walnuts`,
+        '1 tsp vanilla extract',
+        '1 tsp erythritol or stevia (optional)',
+      ],
+      instructions: [
+        'Whisk chia seeds, coconut milk, vanilla, and sweetener. Stir in Greek yogurt.',
+        'Refrigerate 6+ hours or overnight until thickened.',
+        'Stir well before serving.',
+        'Top with berries and macadamia nuts.',
+      ],
+    },
+    {
+      title: 'Chorizo & Bell Pepper Scramble',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.55 / 6))} whole eggs`,
+        `${Math.round(p * 0.4 / 0.24)}g chorizo (cured or fresh), sliced or crumbled`,
+        '1/2 red bell pepper, diced',
+        '2 tbsp diced onion',
+        `${Math.round(f * 0.2 / 0.92)} tsp olive oil`,
+        'Salt, pepper, smoked paprika, fresh parsley',
+      ],
+      instructions: [
+        'Cook chorizo in a skillet over medium heat until browned, 4–5 minutes. Remove excess fat.',
+        'Add bell pepper and onion. Sauté 3 minutes until soft.',
+        'Whisk eggs with salt and smoked paprika. Pour into the pan.',
+        'Scramble gently over medium-low heat until just set.',
+        'Garnish with fresh parsley.',
+      ],
+    },
+  ];
+}
+
+function getLowCarbLunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Shrimp & Avocado Salad Bowl',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.24)}g cooked shrimp, peeled`,
+        `${Math.round(f * 0.5 / 0.15)}g avocado, diced`,
+        '3 cups mixed greens or romaine, chopped',
+        '1/2 cup cherry tomatoes, halved',
+        '1/4 cucumber, sliced',
+        `${Math.round(f * 0.2 / 0.92)} tsp olive oil`,
+        '1 tbsp lemon juice, salt, pepper, Old Bay or paprika',
+      ],
+      instructions: [
+        'Season shrimp with paprika, salt, and pepper.',
+        'Build salad with greens, tomatoes, and cucumber.',
+        'Top with shrimp and avocado.',
+        'Drizzle olive oil and lemon juice.',
+        'Toss gently and serve immediately.',
+      ],
+    },
+    {
+      title: 'Turkey & Cheese Roll-Ups',
+      ingredients: [
+        `${Math.round(p * 0.6 / 0.35)}g sliced deli turkey breast`,
+        `${Math.round(f * 0.35 / 0.33)}g sliced Swiss or provolone cheese`,
+        `${Math.round(f * 0.3 / 0.15)}g avocado, sliced`,
+        '1 cup baby spinach',
+        '2 tbsp Dijon mustard',
+        '1 cup celery sticks or cucumber slices',
+        'Black pepper',
+      ],
+      instructions: [
+        'Lay turkey slices flat. Place a slice of cheese on each.',
+        'Add a few spinach leaves and avocado slice. Season with pepper.',
+        'Spread mustard and roll tightly.',
+        'Secure with a toothpick. Serve with celery sticks on the side.',
+        'Great for meal prep — store in an airtight container up to 2 days.',
+      ],
+    },
+    {
+      title: 'Salmon & Cucumber Avocado Salad',
+      ingredients: [
+        `${Math.round(p * 0.8 / 0.25)}g canned or smoked salmon`,
+        `${Math.round(f * 0.5 / 0.15)}g avocado, diced`,
+        '1 cup cucumber, diced',
+        '1/4 red onion, finely diced',
+        '2 tbsp capers (optional)',
+        '2 tbsp olive oil',
+        '1 tbsp lemon juice, dill, salt, pepper',
+      ],
+      instructions: [
+        'Flake salmon into a bowl.',
+        'Add avocado, cucumber, red onion, and capers.',
+        'Drizzle with olive oil and lemon juice. Season with dill, salt, and pepper.',
+        'Toss gently to combine — don\'t mash the avocado.',
+        'Serve over a bed of greens or eat as-is.',
+      ],
+    },
+  ];
+}
+
+function getLowCarbDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Rack of Lamb with Roasted Broccoli',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.25)}g rack of lamb (frenched)`,
+        '2 cups broccoli florets',
+        `${Math.round(f * 0.35 / 0.81)}g butter`,
+        '3 cloves garlic, fresh rosemary and thyme',
+        '1 tsp Dijon mustard, salt, pepper, olive oil',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C.',
+        'Rub lamb with mustard, garlic, rosemary, thyme, salt, and pepper.',
+        'Sear lamb fat-side down in an oven-safe pan 3 minutes. Flip.',
+        'Toss broccoli with olive oil and salt. Add to the pan around the lamb.',
+        'Roast 20–25 minutes for medium rare (internal 130°F / 55°C). Rest 8 minutes.',
+      ],
+    },
+    {
+      title: 'Pork Belly Bites with Sautéed Kale',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.09)}g pork belly, cut into cubes`,
+        '3 cups kale, stems removed, roughly chopped',
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        '3 cloves garlic',
+        '1 tbsp apple cider vinegar',
+        'Salt, pepper, chili flakes',
+      ],
+      instructions: [
+        'Preheat oven to 375°F / 190°C.',
+        'Season pork belly with salt, pepper, and chili flakes.',
+        'Roast in a single layer 35–40 minutes until crispy and cooked through.',
+        'Meanwhile, wilt kale in butter with garlic over medium heat, 5 minutes.',
+        'Add vinegar to kale, season with salt. Serve alongside pork belly bites.',
+      ],
+    },
+    {
+      title: 'Shrimp Scampi with Zucchini Noodles',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.24)}g large shrimp, peeled and deveined`,
+        '3 medium zucchini, spiralized',
+        `${Math.round(f * 0.45 / 0.81)}g butter`,
+        '4 cloves garlic, minced',
+        '1/4 cup dry white wine or chicken broth',
+        '1 tbsp lemon juice, fresh parsley',
+        `${Math.round(p * 0.1 / 0.35)}g Parmesan, grated`,
+        'Salt, red pepper flakes',
+      ],
+      instructions: [
+        'Sauté zucchini noodles in a dry pan 2–3 minutes. Remove and set aside.',
+        'Melt butter in the same pan over medium-high heat. Add garlic and red pepper flakes.',
+        'Add shrimp. Cook 2 min per side until pink. Remove.',
+        'Add wine and lemon juice. Simmer 2 minutes, scraping the pan.',
+        'Return shrimp. Toss everything together. Serve over zucchini noodles with Parmesan.',
+      ],
+    },
+  ];
+}
+
+function getLowCarbSnackSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Prosciutto & Cream Cheese Cucumber Rolls',
+      ingredients: [
+        `${Math.round(p * 0.5 / 0.25)}g prosciutto, thin slices`,
+        `${Math.round(f * 0.4 / 0.34)}g cream cheese (light)`,
+        '1 large cucumber, cut into 3-inch spears',
+        'Fresh dill or chives',
+        'Black pepper',
+      ],
+      instructions: [
+        'Spread a thin layer of cream cheese on each prosciutto slice.',
+        'Lay a cucumber spear at one end. Sprinkle with dill and pepper.',
+        'Roll the prosciutto tightly around the cucumber.',
+        'Arrange on a plate. Serve cold.',
+      ],
+    },
+    {
+      title: 'Smoked Salmon on Cucumber Rounds',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.20)}g smoked salmon`,
+        '1 large cucumber, sliced into rounds (1/2 inch thick)',
+        `${Math.round(f * 0.45 / 0.34)}g cream cheese (light)`,
+        '1 tbsp capers',
+        'Fresh dill',
+        'Lemon juice, black pepper',
+      ],
+      instructions: [
+        'Pat cucumber rounds dry with a paper towel.',
+        'Spread a small dollop of cream cheese on each round.',
+        'Top with a piece of smoked salmon.',
+        'Add a caper and a sprig of dill to each.',
+        'Squeeze lemon juice over everything. Season with pepper.',
+      ],
+    },
+    {
+      title: 'Deviled Eggs',
+      ingredients: [
+        `${Math.max(3, Math.round(p * 0.8 / 6))} whole eggs, hard boiled`,
+        '1 tbsp avocado oil mayonnaise',
+        '1 tsp Dijon mustard',
+        '1 tsp apple cider vinegar',
+        `${Math.round(f * 0.3 / 0.33)}g crumbled bacon (optional)`,
+        'Paprika, salt, pepper, chives',
+      ],
+      instructions: [
+        'Hard boil eggs. Cool in ice water. Peel and slice in half lengthwise.',
+        'Pop yolks into a bowl. Mash with mayo, mustard, vinegar, salt, and pepper.',
+        'Fill each egg white half with the yolk mixture using a spoon or piping bag.',
+        'Sprinkle paprika, bacon bits, and chives over the top.',
+        'Refrigerate until ready to serve.',
+      ],
+    },
+  ];
+}
+
+function getCarnivoreBreakfastSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Pork Sausage & Scrambled Eggs',
+      ingredients: [
+        `${Math.round(p * 0.45 / 0.14)}g pork breakfast sausage (links or bulk)`,
+        `${Math.max(3, Math.round(p * 0.55 / 6))} whole eggs`,
+        `${Math.round(f * 0.25 / 0.81)}g butter`,
+        'Salt',
+      ],
+      instructions: [
+        'Cook sausage in a skillet over medium heat until browned and cooked through, 6–8 minutes.',
+        'Set sausage aside. Wipe pan.',
+        'Melt butter in the pan over low heat. Add whisked eggs.',
+        'Stir gently until soft and creamy. Remove from heat while still slightly wet.',
+        'Plate sausage alongside scrambled eggs. Season with salt.',
+      ],
+    },
+    {
+      title: 'Lamb Chops & Fried Eggs',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.25)}g lamb loin chops`,
+        `${Math.max(2, Math.round(p * 0.35 / 6))} whole eggs`,
+        `${Math.round(f * 0.35 / 0.81)}g butter`,
+        'Salt, fresh rosemary (optional)',
+      ],
+      instructions: [
+        'Season lamb chops generously with salt.',
+        'Heat a cast iron pan until very hot. Sear lamb 3 minutes per side for medium. Rest 3 minutes.',
+        'In the same pan, melt butter and fry eggs to your liking.',
+        'Plate chops alongside eggs. Season with more salt if needed.',
+      ],
+    },
+    {
+      title: 'Turkey Sausage Patties & Eggs',
+      ingredients: [
+        `${Math.round(p * 0.5 / 0.29)}g ground turkey, seasoned and shaped into patties`,
+        `${Math.max(3, Math.round(p * 0.5 / 6))} whole eggs`,
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        'Salt, garlic powder (optional)',
+      ],
+      instructions: [
+        'Season turkey with salt and garlic powder. Form into 2–3 small patties.',
+        'Cook in a skillet over medium heat 4–5 minutes per side until cooked through.',
+        'In the same pan, melt butter and fry or scramble eggs.',
+        'Plate turkey patties alongside eggs.',
+      ],
+    },
+  ];
+}
+
+function getCarnivoreLunchSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Slow-Cooked Pork Ribs',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.25)}g pork back ribs`,
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        'Salt, garlic powder (optional)',
+      ],
+      instructions: [
+        'Preheat oven to 300°F / 150°C.',
+        'Season ribs generously with salt on all sides.',
+        'Wrap tightly in foil. Place on a baking sheet.',
+        'Bake 2.5 hours until very tender and meat pulls from the bone.',
+        'Unwrap. Baste with butter. Broil 3–5 minutes for a light crust.',
+      ],
+    },
+    {
+      title: 'Beef Liver & Crispy Bacon',
+      ingredients: [
+        `${Math.round(p * 0.65 / 0.27)}g beef liver, sliced`,
+        `${Math.round(p * 0.25 / 0.35)}g bacon`,
+        `${Math.round(f * 0.3 / 0.81)}g butter`,
+        'Salt',
+      ],
+      instructions: [
+        'Cook bacon in a skillet until crispy. Remove and set aside. Reserve fat.',
+        'Season liver slices with salt.',
+        'Add butter to the bacon fat. Pan-fry liver 2 minutes per side — do not overcook.',
+        'Liver should be slightly pink in the center for best texture and nutrient retention.',
+        'Plate liver with crispy bacon on the side.',
+      ],
+    },
+    {
+      title: 'Lamb Kofta Patties',
+      ingredients: [
+        `${Math.round(p * 0.9 / 0.25)}g ground lamb`,
+        `${Math.round(f * 0.25 / 0.81)}g butter or tallow`,
+        'Salt',
+      ],
+      instructions: [
+        'Season ground lamb with salt only. Mix gently.',
+        'Form into oval patties (kofta shape), about 80g each.',
+        'Heat butter in a skillet over medium-high heat.',
+        'Cook patties 4 minutes per side until browned and cooked through.',
+        'Rest 2 minutes. Serve hot.',
+      ],
+    },
+  ];
+}
+
+function getCarnivoreDinnerSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Rack of Lamb with Herb Butter',
+      ingredients: [
+        `${Math.round(p * 0.9 / 0.25)}g rack of lamb`,
+        `${Math.round(f * 0.5 / 0.81)}g butter, softened`,
+        'Fresh rosemary and thyme, minced',
+        '2 cloves garlic (optional)',
+        'Salt',
+      ],
+      instructions: [
+        'Bring rack of lamb to room temperature 20 minutes. Season generously with salt.',
+        'Mix butter with rosemary, thyme, and garlic if using.',
+        'Sear rack fat-side down in a hot skillet 3–4 minutes.',
+        'Flip and slather with herb butter. Roast at 400°F / 200°C for 18–22 minutes (medium rare).',
+        'Rest 8–10 minutes before carving. Pour pan juices over top.',
+      ],
+    },
+    {
+      title: 'Pork Chops with Pan Gravy',
+      ingredients: [
+        `${Math.round(p * 0.9 / 0.27)}g bone-in pork chops`,
+        `${Math.round(f * 0.5 / 0.81)}g butter`,
+        '2 cloves garlic (optional)',
+        'Fresh sage or thyme (optional)',
+        'Salt',
+      ],
+      instructions: [
+        'Season pork chops very generously with salt.',
+        'Heat a skillet over high heat. Add half the butter.',
+        'Sear pork chops 4 minutes per side until deep golden brown.',
+        'Add remaining butter and garlic. Baste chops continuously 2 minutes.',
+        'Rest 5 minutes. Pour all the pan butter over chops before serving.',
+      ],
+    },
+    {
+      title: 'Duck Leg Confit',
+      ingredients: [
+        `${Math.round(p * 0.85 / 0.19)}g duck legs`,
+        `${Math.round(f * 0.5 / 0.81)}g duck fat or butter`,
+        'Salt',
+      ],
+      instructions: [
+        'Season duck legs heavily with salt. Refrigerate uncovered 4–24 hours (optional but improves flavor).',
+        'Preheat oven to 300°F / 150°C.',
+        'Place duck legs in a small baking dish. Cover with melted duck fat or butter.',
+        'Bake covered 2.5 hours until very tender.',
+        'Uncover and raise oven to 425°F / 220°C. Roast 15–20 minutes until skin is crispy.',
+      ],
+    },
+  ];
+}
+
+function getCarnivoreSnackSwapOptions(p, c, f) {
+  return [
+    {
+      title: 'Smoked Salmon & Cream Cheese',
+      ingredients: [
+        `${Math.round(p * 0.7 / 0.20)}g smoked salmon`,
+        `${Math.round(f * 0.5 / 0.34)}g cream cheese`,
+        'Lemon juice, dill (optional)',
+      ],
+      instructions: [
+        'Lay smoked salmon slices flat.',
+        'Spread cream cheese on each slice.',
+        'Roll up or eat as-is.',
+        'Squeeze lemon juice over the top if using.',
+      ],
+    },
+    {
+      title: 'Chicken Drumsticks',
+      ingredients: [
+        `${Math.round(p * 0.9 / 0.18)}g chicken drumsticks`,
+        `${Math.round(f * 0.2 / 0.81)}g butter`,
+        'Salt',
+      ],
+      instructions: [
+        'Preheat oven to 425°F / 220°C.',
+        'Rub drumsticks with melted butter and season generously with salt.',
+        'Bake 30–35 minutes until skin is crispy and internal temp is 165°F / 74°C.',
+        'Cool slightly and eat with your hands.',
+        'Great for meal prep — make a batch and refrigerate.',
+      ],
+    },
+    {
+      title: 'Pork Rinds & Bone Broth',
+      ingredients: [
+        `${Math.round(p * 0.6 / 0.55)}g plain pork rinds (chicharrones)`,
+        `${Math.round(p * 0.3 / 0.07)}g beef bone broth (warm cup)`,
+        'Salt',
+      ],
+      instructions: [
+        'Warm bone broth in a small saucepan or microwave until steaming.',
+        'Pour into a mug.',
+        'Serve pork rinds on the side — great for dipping or eating separately.',
+        'Season broth with a pinch of salt if needed.',
+      ],
+    },
+  ];
+}
+
+// --- Swap Infrastructure ---
+
+function getSwapPool(mealIndex, totalMeals, protein, carbs, fats, profile) {
+  const isBreakfast = mealIndex === 0;
+  const isDinner = mealIndex === totalMeals - 1;
+  const isLunch = (totalMeals <= 4 && mealIndex === 1) || (totalMeals >= 5 && mealIndex === 2);
+  const is2Meal = totalMeals === 2;
+  const d = (profile && profile.diet) ? profile.diet : {};
+
+  let options;
+  if (d.isCarnivore) {
+    if (is2Meal) options = mealIndex === 0 ? getCarnivoreLunchSwapOptions(protein, carbs, fats) : getCarnivoreDinnerSwapOptions(protein, carbs, fats);
+    else if (isBreakfast) options = getCarnivoreBreakfastSwapOptions(protein, carbs, fats);
+    else if (isDinner) options = getCarnivoreDinnerSwapOptions(protein, carbs, fats);
+    else if (isLunch) options = getCarnivoreLunchSwapOptions(protein, carbs, fats);
+    else options = getCarnivoreSnackSwapOptions(protein, carbs, fats);
+  } else if (d.isVegan) {
+    if (is2Meal) options = mealIndex === 0 ? getVeganLunchSwapOptions(protein, carbs, fats) : getVeganDinnerSwapOptions(protein, carbs, fats);
+    else if (isBreakfast) options = getVeganBreakfastSwapOptions(protein, carbs, fats);
+    else if (isDinner) options = getVeganDinnerSwapOptions(protein, carbs, fats);
+    else if (isLunch) options = getVeganLunchSwapOptions(protein, carbs, fats);
+    else options = getVeganSnackSwapOptions(protein, carbs, fats);
+  } else if (d.isVegetarian) {
+    if (is2Meal) options = mealIndex === 0 ? getVegetarianLunchSwapOptions(protein, carbs, fats) : getVegetarianDinnerSwapOptions(protein, carbs, fats);
+    else if (isBreakfast) options = getVegetarianBreakfastSwapOptions(protein, carbs, fats);
+    else if (isDinner) options = getVegetarianDinnerSwapOptions(protein, carbs, fats);
+    else if (isLunch) options = getVegetarianLunchSwapOptions(protein, carbs, fats);
+    else options = getVegetarianSnackSwapOptions(protein, carbs, fats);
+  } else if (d.isLowCarb || d.isKeto) {
+    if (is2Meal) options = mealIndex === 0 ? getLowCarbLunchSwapOptions(protein, carbs, fats) : getLowCarbDinnerSwapOptions(protein, carbs, fats);
+    else if (isBreakfast) options = getLowCarbBreakfastSwapOptions(protein, carbs, fats);
+    else if (isDinner) options = getLowCarbDinnerSwapOptions(protein, carbs, fats);
+    else if (isLunch) options = getLowCarbLunchSwapOptions(protein, carbs, fats);
+    else options = getLowCarbSnackSwapOptions(protein, carbs, fats);
+  } else {
+    if (is2Meal) options = mealIndex === 0 ? getBrunchSwapOptions(protein, carbs, fats) : getLargeDinnerSwapOptions(protein, carbs, fats);
+    else if (isBreakfast) options = getBreakfastSwapOptions(protein, carbs, fats);
+    else if (isDinner) options = getDinnerSwapOptions(protein, carbs, fats);
+    else if (isLunch) options = getLunchSwapOptions(protein, carbs, fats);
+    else options = getSnackSwapOptions(protein, carbs, fats);
+  }
+
+  return filterMealOptions(options, profile);
+}
+
+function getFullOptionPool(mealIndex, totalMeals, protein, carbs, fats, profile) {
+  const original = getMealOptions(mealIndex, totalMeals, protein, carbs, fats, null, profile);
+  const extras = getSwapPool(mealIndex, totalMeals, protein, carbs, fats, profile);
+  const seen = new Set(original.map(o => o.title));
+  return [...original, ...extras.filter(o => !seen.has(o.title))];
+}
+
 // --- Food List with Quantities ---
 
 function getFoodList(data) {
@@ -2963,42 +4307,76 @@ function buildPlanHTML(data) {
 
 // --- Preview ---
 
-function buildPreviewHTML(data) {
-  const mealsHTML = data.mealPlan.map(meal => `
-    <div class="meal-card">
+function buildMealCardHTML(mealIdx, meal) {
+  const optionsHTML = ['A', 'B', 'C'].map(slot => {
+    const opt = meal[`option${slot}`];
+    return `
+      <div class="meal-option">
+        <div class="meal-option-header">
+          <h5>Option ${slot}: ${opt.title}</h5>
+          <button class="btn-swap" onclick="swapMealOption(${mealIdx}, '${slot}')">↺ Swap</button>
+        </div>
+        <div class="recipe-section">
+          <strong>Ingredients:</strong>
+          <ul>${opt.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <strong>Instructions:</strong>
+          <ol>${opt.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="meal-card" id="meal-card-${mealIdx}">
       <h4>${meal.name}</h4>
       <div class="meal-macros">
         ${meal.calories} cal | P: ${meal.protein}g | C: ${meal.carbs}g | F: ${meal.fats}g
       </div>
-      <div class="meal-option">
-        <h5>Option A: ${meal.optionA.title}</h5>
-        <div class="recipe-section">
-          <strong>Ingredients:</strong>
-          <ul>${meal.optionA.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-          <strong>Instructions:</strong>
-          <ol>${meal.optionA.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
-        </div>
-      </div>
-      <div class="meal-option">
-        <h5>Option B: ${meal.optionB.title}</h5>
-        <div class="recipe-section">
-          <strong>Ingredients:</strong>
-          <ul>${meal.optionB.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-          <strong>Instructions:</strong>
-          <ol>${meal.optionB.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
-        </div>
-      </div>
-      <div class="meal-option">
-        <h5>Option C: ${meal.optionC.title}</h5>
-        <div class="recipe-section">
-          <strong>Ingredients:</strong>
-          <ul>${meal.optionC.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-          <strong>Instructions:</strong>
-          <ol>${meal.optionC.instructions.map(s => `<li>${s}</li>`).join('')}</ol>
-        </div>
-      </div>
+      ${optionsHTML}
     </div>
-  `).join('');
+  `;
+}
+
+function swapMealOption(mealIdx, slot) {
+  if (!currentPlanData) return;
+  const meal = currentPlanData.mealPlan[mealIdx];
+  const historyKey = `${mealIdx}-${slot}`;
+
+  if (!swapHistory[historyKey]) {
+    swapHistory[historyKey] = new Set([meal[`option${slot}`].title]);
+  }
+
+  const pool = getFullOptionPool(
+    mealIdx,
+    currentPlanData.mealsPerDay,
+    meal.protein, meal.carbs, meal.fats,
+    clientProfile
+  );
+
+  const seen = swapHistory[historyKey];
+  let unseen = pool.filter(o => !seen.has(o.title));
+
+  if (unseen.length === 0) {
+    swapHistory[historyKey] = new Set([meal[`option${slot}`].title]);
+    unseen = pool.filter(o => o.title !== meal[`option${slot}`].title);
+  }
+
+  if (unseen.length === 0) return;
+
+  const next = unseen[0];
+  swapHistory[historyKey].add(next.title);
+  currentPlanData.mealPlan[mealIdx][`option${slot}`] = next;
+
+  const cardEl = document.getElementById(`meal-card-${mealIdx}`);
+  if (cardEl) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = buildMealCardHTML(mealIdx, currentPlanData.mealPlan[mealIdx]);
+    cardEl.replaceWith(tmp.firstElementChild);
+  }
+}
+
+function buildPreviewHTML(data) {
+  const mealsHTML = data.mealPlan.map((meal, idx) => buildMealCardHTML(idx, meal)).join('');
 
   return `
     <div class="preview-adjust">
