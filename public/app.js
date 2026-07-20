@@ -467,20 +467,52 @@ function getClientHistoryKey(client) {
   return `pt_plan_${id}`;
 }
 
+const ACTIVITY_LABELS = {
+  '1.2': 'Sedentary',
+  '1.375': 'Lightly Active',
+  '1.55': 'Moderately Active',
+  '1.725': 'Very Active',
+  '1.9': 'Extremely Active',
+};
+
+function getDietaryStyleLabel(profile) {
+  if (!profile || !profile.diet) return 'Omnivore';
+  const d = profile.diet;
+  if (d.isCarnivore) return 'Carnivore';
+  if (d.isVegan) return 'Vegan';
+  if (d.isVegetarian) return 'Vegetarian';
+  if (d.isKeto) return 'Keto';
+  if (d.isLowCarb) return 'Low Carb';
+  if (d.isPescatarian) return 'Pescatarian';
+  return 'Omnivore';
+}
+
 function saveClientPlan(data) {
   if (!selectedClient) return;
   try {
     const key = getClientHistoryKey(selectedClient);
     const plan = {
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      clientName: data.clientName,
       goalLabel: data.goalLabel,
+      goal: data.goal,
       calorieTarget: data.calorieTarget,
+      bmr: data.bmr,
+      tdee: data.tdee,
       proteinGrams: data.proteinGrams,
+      proteinCals: data.proteinCals,
       carbsGrams: data.carbsGrams,
+      carbsCals: data.carbsCals,
       fatGrams: data.fatGrams,
+      fatCals: data.fatCals,
       waterLiters: data.waterLiters,
       mealsPerDay: data.mealsPerDay,
-      dietaryStyle: clientProfile ? clientProfile.dietaryStyle : '',
+      weightLbs: data.weightLbs,
+      heightIn: data.heightIn,
+      age: data.age,
+      gender: data.gender,
+      activityLevel: String(data.activityLevel),
+      dietaryStyle: getDietaryStyleLabel(clientProfile),
     };
     localStorage.setItem(key, JSON.stringify(plan));
   } catch (e) {}
@@ -488,7 +520,8 @@ function saveClientPlan(data) {
 
 function displayPreviousPlan() {
   const container = document.getElementById('previous-plan-section');
-  if (!selectedClient || !container) return;
+  const columns = document.getElementById('data-columns');
+  if (!selectedClient || !container || !columns) return;
 
   let plan = null;
   try {
@@ -499,24 +532,89 @@ function displayPreviousPlan() {
 
   if (!plan) {
     container.innerHTML = '';
+    columns.classList.remove('has-history');
+    const fh = document.getElementById('form-col-header');
+    if (fh) fh.classList.add('hidden');
     return;
   }
 
+  // Enable side-by-side grid and show new plan header
+  columns.classList.add('has-history');
+  const fh = document.getElementById('form-col-header');
+  if (fh) fh.classList.remove('hidden');
+
+  // Macro bar widths
+  const totalCals = plan.proteinCals + plan.carbsCals + plan.fatCals;
+  const pPct = totalCals ? Math.round(plan.proteinCals / totalCals * 100) : 33;
+  const cPct = totalCals ? Math.round(plan.carbsCals  / totalCals * 100) : 34;
+  const fPct = 100 - pPct - cPct;
+
+  const activityLabel = ACTIVITY_LABELS[plan.activityLevel] || plan.activityLevel;
+  const genderLabel = plan.gender === 'male' ? 'Male' : 'Female';
+
   container.innerHTML = `
-    <div class="previous-plan-card">
-      <div class="previous-plan-label">Previous Plan on File</div>
-      <div class="previous-plan-date">Generated on ${plan.date}</div>
-      <div class="previous-plan-stats">
-        <span class="prev-stat"><strong>Goal:</strong> ${plan.goalLabel}</span>
-        <span class="prev-stat"><strong>Calories:</strong> ${plan.calorieTarget} kcal/day</span>
-        <span class="prev-stat"><strong>Protein:</strong> ${plan.proteinGrams}g</span>
-        <span class="prev-stat"><strong>Carbs:</strong> ${plan.carbsGrams}g</span>
-        <span class="prev-stat"><strong>Fats:</strong> ${plan.fatGrams}g</span>
-        <span class="prev-stat"><strong>Meals:</strong> ${plan.mealsPerDay}/day</span>
-        <span class="prev-stat"><strong>Water:</strong> ${plan.waterLiters}L/day</span>
-        ${plan.dietaryStyle ? `<span class="prev-stat"><strong>Diet:</strong> ${plan.dietaryStyle}</span>` : ''}
+    <div class="prev-plan-card">
+      <div class="prev-plan-header">
+        <div class="prev-plan-badge">Previous Plan on File</div>
+        <div class="prev-plan-title">${plan.clientName || 'Client'}</div>
+        <div class="prev-plan-date">Generated on ${plan.date}</div>
       </div>
-      <p class="previous-plan-note">Generate and export a new plan below — only the new plan will be included in the PDF.</p>
+      <div class="prev-plan-body">
+
+        <div>
+          <div class="prev-plan-section-label">Goal</div>
+          <span class="prev-plan-goal-badge">${plan.goalLabel}</span>
+        </div>
+
+        <div>
+          <div class="prev-plan-section-label">Body Metrics</div>
+          <div class="prev-plan-rows">
+            ${plan.weightLbs ? `<div class="prev-plan-row"><span class="prev-plan-row-label">Weight</span><span class="prev-plan-row-value">${plan.weightLbs} lbs</span></div>` : ''}
+            ${plan.heightIn  ? `<div class="prev-plan-row"><span class="prev-plan-row-label">Height</span><span class="prev-plan-row-value">${plan.heightIn} in</span></div>` : ''}
+            ${plan.age       ? `<div class="prev-plan-row"><span class="prev-plan-row-label">Age</span><span class="prev-plan-row-value">${plan.age} · ${genderLabel}</span></div>` : ''}
+            ${activityLabel  ? `<div class="prev-plan-row"><span class="prev-plan-row-label">Activity</span><span class="prev-plan-row-value">${activityLabel}</span></div>` : ''}
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-plan-section-label">Calories</div>
+          <div class="prev-plan-rows">
+            ${plan.bmr  ? `<div class="prev-plan-row"><span class="prev-plan-row-label">BMR</span><span class="prev-plan-row-value">${plan.bmr} kcal</span></div>` : ''}
+            ${plan.tdee ? `<div class="prev-plan-row"><span class="prev-plan-row-label">TDEE</span><span class="prev-plan-row-value">${plan.tdee} kcal</span></div>` : ''}
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Target</span><span class="prev-plan-row-value highlight">${plan.calorieTarget} kcal</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-plan-section-label">Daily Macros</div>
+          <div class="prev-plan-macro-bar">
+            <div class="seg-p" style="width:${pPct}%"></div>
+            <div class="seg-c" style="width:${cPct}%"></div>
+            <div class="seg-f" style="width:${fPct}%"></div>
+          </div>
+          <div class="prev-plan-macro-legend">
+            <span><span class="dot" style="background:#0984e3"></span>P ${plan.proteinGrams}g</span>
+            <span><span class="dot" style="background:#00b894"></span>C ${plan.carbsGrams}g</span>
+            <span><span class="dot" style="background:#fdcb6e"></span>F ${plan.fatGrams}g</span>
+          </div>
+          <div class="prev-plan-rows" style="margin-top:8px">
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Protein</span><span class="prev-plan-row-value">${plan.proteinGrams}g / ${plan.proteinCals} kcal</span></div>
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Carbs</span><span class="prev-plan-row-value">${plan.carbsGrams}g / ${plan.carbsCals} kcal</span></div>
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Fats</span><span class="prev-plan-row-value">${plan.fatGrams}g / ${plan.fatCals} kcal</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="prev-plan-section-label">Other</div>
+          <div class="prev-plan-rows">
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Meals/day</span><span class="prev-plan-row-value">${plan.mealsPerDay}</span></div>
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Water</span><span class="prev-plan-row-value">${plan.waterLiters}L/day</span></div>
+            <div class="prev-plan-row"><span class="prev-plan-row-label">Diet Style</span><span class="prev-plan-row-value">${plan.dietaryStyle || 'Omnivore'}</span></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="prev-plan-footer">New plan will be generated on the right → PDF exports the new plan only.</div>
     </div>
   `;
 }
