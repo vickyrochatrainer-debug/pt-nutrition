@@ -338,7 +338,7 @@ function showStep(stepId) {
 function computeNutrition() {
   const weightLbs = parseFloat(document.getElementById('weight').value);
   const goalWeightLbs = document.getElementById('goal-weight').value;
-  const heightIn = parseFloat(document.getElementById('height').value);
+  let heightIn = parseFloat(document.getElementById('height').value);
   const bodyFat = parseFloat(document.getElementById('body-fat').value) || null;
   const age = parseInt(document.getElementById('age').value);
   const gender = document.getElementById('gender').value;
@@ -347,6 +347,15 @@ function computeNutrition() {
   const goal = document.getElementById('goal').value;
   const mealsPerDay = parseInt(document.getElementById('meals-per-day').value);
   const personalNote = document.getElementById('personal-note').value;
+
+  // If height looks like feet.inches notation (e.g. 5.2 meaning 5'2"), convert to total inches.
+  // Any value under 12 cannot be a valid height in inches for an adult.
+  if (heightIn < 12) {
+    const feet = Math.floor(heightIn);
+    const decPart = Math.round((heightIn - feet) * 100);
+    const inchPart = decPart > 11 ? Math.round(decPart / 10) : decPart;
+    heightIn = feet * 12 + inchPart;
+  }
 
   const weight = weightLbs / 2.205;
   const goalWeight = goalWeightLbs ? (parseFloat(goalWeightLbs) / 2.205).toFixed(1) : '';
