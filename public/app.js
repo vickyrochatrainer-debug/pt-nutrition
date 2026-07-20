@@ -6724,15 +6724,18 @@ function swapMealOption(mealIdx, slot) {
   );
 
   const slotIndex = { 'A': 0, 'B': 1, 'C': 2 }[slot] ?? 0;
-  const windowStart = slotIndex * 3;
-  let candidates = allExtras
-    .slice(windowStart, windowStart + 3)
-    .filter(o => o.title !== currentTitle);
+  const n = allExtras.length;
+  // Rotate the filtered pool by a per-slot offset so each slot sees different items first.
+  // With n=9 (full pool): A=indices 0-2, B=3-5, C=6-8 — perfect non-overlapping thirds.
+  // With n<9 (some items filtered out): each slot still starts at a different point in the pool.
+  const step = Math.max(1, Math.floor(n / 3));
+  const startIdx = n > 0 ? (slotIndex * step) % n : 0;
+  const rotated = [...allExtras.slice(startIdx), ...allExtras.slice(0, startIdx)];
+  let candidates = rotated.filter(o => o.title !== currentTitle).slice(0, 3);
 
-  // Backfill from the rest of the pool if diet/allergen filtering thinned the window
   if (candidates.length < 3) {
     const used = new Set([currentTitle, ...candidates.map(o => o.title)]);
-    const fallback = allExtras.filter(o => !used.has(o.title));
+    const fallback = rotated.filter(o => !used.has(o.title));
     candidates = [...candidates, ...fallback].slice(0, 3);
   }
 
