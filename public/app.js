@@ -3,7 +3,7 @@ let selectedClient = null;
 let clientHeaders = [];
 let clientProfile = null;
 let currentPlanData = null;
-let swapHistory = {};
+let pendingSwap = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   registerServiceWorker();
@@ -635,7 +635,7 @@ function generatePlan() {
   const mealPlan = generateMealPlan(data.mealsPerDay, data.proteinGrams, data.carbsGrams, data.fatGrams, data.calorieTarget, data.goal, clientProfile);
 
   currentPlanData = { ...data, mealPlan };
-  swapHistory = {};
+  pendingSwap = null;
   saveClientPlan(data);
 
   document.getElementById('nutrition-plan').innerHTML = buildPreviewHTML(currentPlanData);
@@ -4341,11 +4341,6 @@ function buildMealCardHTML(mealIdx, meal) {
 function swapMealOption(mealIdx, slot) {
   if (!currentPlanData) return;
   const meal = currentPlanData.mealPlan[mealIdx];
-  const historyKey = `${mealIdx}-${slot}`;
-
-  if (!swapHistory[historyKey]) {
-    swapHistory[historyKey] = new Set([meal[`option${slot}`].title]);
-  }
 
   const pool = getFullOptionPool(
     mealIdx,
@@ -4354,25 +4349,50 @@ function swapMealOption(mealIdx, slot) {
     clientProfile
   );
 
-  // Exclude what is currently displayed in the other two slots so swaps are always fresh
+  const currentTitle = meal[`option${slot}`].title;
   const shownElsewhere = new Set(
     ['A', 'B', 'C'].filter(s => s !== slot).map(s => meal[`option${s}`].title)
   );
 
-  const seen = swapHistory[historyKey];
-  let candidates = pool.filter(o => !seen.has(o.title) && !shownElsewhere.has(o.title));
-
-  if (candidates.length === 0) {
-    // All unique options exhausted — reset history (keep only current) and try again
-    swapHistory[historyKey] = new Set([meal[`option${slot}`].title]);
-    candidates = pool.filter(o => o.title !== meal[`option${slot}`].title && !shownElsewhere.has(o.title));
-  }
-
+  const candidates = pool.filter(o => o.title !== currentTitle && !shownElsewhere.has(o.title));
   if (candidates.length === 0) return;
 
-  const next = candidates[0];
-  swapHistory[historyKey].add(next.title);
-  currentPlanData.mealPlan[mealIdx][`option${slot}`] = next;
+  pendingSwap = { mealIdx, slot, candidates: candidates.slice(0, 3) };
+  showSwapPicker(mealIdx, slot, pendingSwap.candidates);
+}
+
+function showSwapPicker(mealIdx, slot, candidates) {
+  const existing = document.getElementById('swap-picker-overlay');
+  if (existing) existing.remove();
+
+  const candidatesHTML = candidates.map((opt, i) => {
+    const preview = opt.ingredients.slice(0, 2).join(' · ') + (opt.ingredients.length > 2 ? ' …' : '');
+    return `
+      <div class="swap-candidate" onclick="commitSwap(${i})">
+        <div class="swap-candidate-title">${opt.title}</div>
+        <div class="swap-candidate-preview">${preview}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="swap-picker-overlay" id="swap-picker-overlay" onclick="if(event.target===this)dismissSwapPicker()">
+      <div class="swap-picker-modal">
+        <div class="swap-picker-heading">Choose a replacement for Option ${slot}</div>
+        ${candidatesHTML}
+        <button class="btn-swap-cancel" onclick="dismissSwapPicker()">Cancel</button>
+      </div>
+    </div>
+  `);
+}
+
+function commitSwap(candidateIndex) {
+  if (!pendingSwap) return;
+  const { mealIdx, slot, candidates } = pendingSwap;
+  const chosen = candidates[candidateIndex];
+  currentPlanData.mealPlan[mealIdx][`option${slot}`] = chosen;
+  pendingSwap = null;
+  dismissSwapPicker();
 
   const cardEl = document.getElementById(`meal-card-${mealIdx}`);
   if (cardEl) {
@@ -4380,6 +4400,12 @@ function swapMealOption(mealIdx, slot) {
     tmp.innerHTML = buildMealCardHTML(mealIdx, currentPlanData.mealPlan[mealIdx]);
     cardEl.replaceWith(tmp.firstElementChild);
   }
+}
+
+function dismissSwapPicker() {
+  const overlay = document.getElementById('swap-picker-overlay');
+  if (overlay) overlay.remove();
+  pendingSwap = null;
 }
 
 function buildPreviewHTML(data) {
